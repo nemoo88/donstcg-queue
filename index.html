@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TCG Queue - Live Rip n Ship System</title>
+  <title>DITT FÖRETAGSNAMN - Live Rip n Ship</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     :root {
+      --brand-primary: #3b82f6;
+      --brand-secondary: #8b5cf6;
       --bg-primary: #050505;
       --bg-secondary: #0a0a0a;
       --bg-card: #111111;
@@ -17,15 +18,9 @@
       --text-muted: #555555;
       --border: #222222;
       --border-hover: #333333;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --discord: #5865F2;
       --live: #ef4444;
       --success: #22c55e;
-      --gradient-1: #3b82f6;
-      --gradient-2: #8b5cf6;
     }
-    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background-color: var(--bg-primary);
@@ -33,7 +28,6 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
-    
     .nav {
       position: fixed;
       top: 0;
@@ -45,7 +39,6 @@
       border-bottom: 1px solid var(--border);
       padding: 16px 24px;
     }
-    
     .nav-content {
       max-width: 1400px;
       margin: 0 auto;
@@ -53,7 +46,6 @@
       justify-content: space-between;
       align-items: center;
     }
-    
     .logo {
       display: flex;
       align-items: center;
@@ -62,24 +54,21 @@
       font-weight: 800;
       letter-spacing: -0.5px;
     }
-    
     .logo-icon {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
     }
-    
     .nav-links {
       display: flex;
       gap: 32px;
       align-items: center;
     }
-    
     .nav-link {
       color: var(--text-secondary);
       text-decoration: none;
@@ -87,24 +76,21 @@
       font-weight: 500;
       transition: color 0.3s;
     }
-    
     .nav-link:hover {
       color: var(--text-primary);
     }
-    
-    .badge {
+    .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
       border-radius: 100px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--success);
     }
-    
     .hero {
       min-height: 100vh;
       display: flex;
@@ -114,7 +100,6 @@
       position: relative;
       overflow: hidden;
     }
-    
     .hero::before {
       content: '';
       position: absolute;
@@ -126,14 +111,12 @@
       background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
       pointer-events: none;
     }
-    
     .hero-content {
       max-width: 900px;
       text-align: center;
       position: relative;
       z-index: 1;
     }
-    
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -146,7 +129,6 @@
       color: var(--text-secondary);
       margin-bottom: 32px;
     }
-    
     .hero h1 {
       font-size: clamp(48px, 10vw, 80px);
       font-weight: 800;
@@ -157,21 +139,18 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    
     .hero p {
       font-size: 20px;
       color: var(--text-secondary);
       max-width: 600px;
       margin: 0 auto 40px;
     }
-    
     .hero-cta {
       display: flex;
       gap: 16px;
       justify-content: center;
       flex-wrap: wrap;
     }
-    
     .btn {
       display: inline-flex;
       align-items: center;
@@ -185,168 +164,81 @@
       border: none;
       cursor: pointer;
     }
-    
     .btn-primary {
-      background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
       color: white;
       box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
     }
-    
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
     }
-    
-    .btn-discord {
-      background: var(--discord);
-      color: white;
-      box-shadow: 0 10px 40px rgba(88, 101, 242, 0.3);
-    }
-    
-    .btn-discord:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 60px rgba(88, 101, 242, 0.4);
-    }
-    
     .btn-secondary {
       background: var(--bg-card);
       color: var(--text-primary);
       border: 1px solid var(--border);
     }
-    
     .btn-secondary:hover {
       background: var(--bg-hover);
       border-color: var(--border-hover);
     }
-    
-    .demo-notice {
+    .setup-notice {
       margin-top: 60px;
       padding: 24px;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 16px;
-      color: #fbbf24;
+      color: var(--brand-primary);
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
     }
-    
-    .demo-notice h3 {
+    .setup-notice h3 {
       margin-bottom: 12px;
       font-size: 18px;
     }
-    
-    .demo-notice p {
+    .setup-notice p {
       font-size: 14px;
       line-height: 1.6;
-      color: #fbbf24;
       margin-bottom: 8px;
     }
-    
-    .demo-notice a {
-      color: #fbbf24;
+    .setup-notice a {
+      color: var(--brand-primary);
       text-decoration: underline;
     }
-    
-    .contact-box {
-      margin-top: 40px;
-      padding: 24px;
-      background: rgba(88, 101, 242, 0.1);
-      border: 1px solid rgba(88, 101, 242, 0.3);
-      border-radius: 16px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .contact-box h3 {
-      margin-bottom: 16px;
-      font-size: 20px;
-      color: var(--discord);
-    }
-    
-    .contact-box p {
-      font-size: 15px;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-    
-    .features {
-      margin-top: 60px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      text-align: left;
-    }
-    
-    .feature-icon {
-      font-size: 32px;
-      margin-bottom: 16px;
-    }
-    
-    .feature-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    
-    .feature-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    
     .footer {
       padding: 60px 24px;
       background: var(--bg-card);
       border-top: 1px solid var(--border);
       text-align: center;
     }
-    
     .footer-links {
       display: flex;
       gap: 32px;
       justify-content: center;
       margin-bottom: 24px;
     }
-    
     .footer-link {
       color: var(--text-secondary);
       text-decoration: none;
       font-size: 14px;
       transition: color 0.3s;
     }
-    
     .footer-link:hover {
       color: var(--text-primary);
     }
-    
     .footer-copy {
       font-size: 14px;
       color: var(--text-muted);
     }
-    
     @media (max-width: 768px) {
       .nav-links {
         display: none;
       }
-      
       .hero-cta {
         flex-direction: column;
         width: 100%;
       }
-      
       .btn {
         width: 100%;
         justify-content: center;
@@ -359,14 +251,14 @@
     <div class="nav-content">
       <div class="logo">
         <div class="logo-icon">🎴</div>
-        <span>TCG Queue</span>
+        <span>DITT FÖRETAGSNAMN</span>
       </div>
       <div class="nav-links">
-        <a href="admin/" class="nav-link">Admin Demo</a>
-        <a href="overlay/" target="_blank" class="nav-link">Overlay Demo</a>
-        <div class="badge">
-          <span>🚀</span>
-          Demo
+        <a href="admin/" class="nav-link">Admin</a>
+        <a href="overlay/" target="_blank" class="nav-link">Overlay</a>
+        <div class="status-badge">
+          <span>✓</span>
+          Live
         </div>
       </div>
     </div>
@@ -376,82 +268,39 @@
     <div class="hero-content">
       <div class="hero-badge">
         <span>🔥</span>
-        Live Rip n Ship System
+        Live Rip n Ship
       </div>
-      <h1>TCG Queue System</h1>
-      <p>Komplett kösystem för TCG-streamers. Hantera ordrar, visa kö live i streamen, och koppla till din butik.</p>
+      <h1>DITT FÖRETAGSNAMN</h1>
+      <p>Köp kort och se dem öppnas live på stream! Dina kort skickas direkt till dig efter opening.</p>
       
       <div class="hero-cta">
         <a href="admin/" class="btn btn-primary">
-          🎮 Testa Admin Demo
+          🎮 Öppna Admin
         </a>
         <a href="overlay/" target="_blank" class="btn btn-secondary">
-          📺 Se Overlay Demo
+          📺 Se Overlay
         </a>
       </div>
 
-      <div class="demo-notice">
-        <h3>⚠️ Detta är en demo-version</h3>
+      <div class="setup-notice">
+        <h3>⚙️ Första gången?</h3>
         <p>
-          All data sparas endast lokalt i din webbläsare och försvinner när du laddar om sidan.
+          Om detta är första gången du använder systemet, följ setup-guiden för att koppla din butik.
         </p>
         <p>
-          <strong>Fullversionen inkluderar:</strong><br>
-          • Koppling till Shopify/WooCommerce<br>
-          • Permanent datalagring<br>
-          • Automatiska ordrar från köp<br>
-          • OBS-overlay för stream<br>
-          • Event-hantering (Giveaway, Packbattle, etc.)
+          <a href="setup.html">Gå till Setup-guide →</a>
         </p>
-      </div>
-
-      <!-- 🎯 DISCORD-KONTAKT -->
-      <div class="contact-box">
-        <h3>💬 Intresserad av fullversionen?</h3>
-        <p>
-          Kontakta mig på Discord för prisuppgift, custom anpassning, eller frågor om systemet.
-        </p>
-        <a href="https://discord.com/users/164845871278718978" target="_blank" class="btn btn-discord">
-          💬 Kontakta på Discord
-        </a>
-        <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">
-          Eller lägg till: <code>nemoo88</code>
-        </p>
-      </div>
-
-      <div class="features">
-        <div class="feature-card">
-          <div class="feature-icon">🎮</div>
-          <div class="feature-title">Live Admin</div>
-          <div class="feature-desc">Styr kön i realtid. Markera ordrar som klara, skippa, eller lägg till manuellt.</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📺</div>
-          <div class="feature-title">OBS Overlay</div>
-          <div class="feature-desc">Visa aktuell order och kön direkt i din stream. Automatisk uppdatering.</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🛒</div>
-          <div class="feature-title">Shopify-integration</div>
-          <div class="feature-desc">Automatiska ordrar från din butik. Separat hantering för events.</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <div class="feature-title">Statistik</div>
-          <div class="feature-desc">Följ omsättning, antal klara ordrar, och estimerad tid i realtid.</div>
-        </div>
       </div>
     </div>
   </section>
 
   <footer class="footer">
     <div class="footer-links">
-      <a href="#" class="footer-link">Demo</a>
-      <a href="#" class="footer-link">Funktioner</a>
-      <!-- Discord i footer också -->
-      <a href="https://discord.com/users/164845871278718978" target="_blank" class="footer-link">💬 Discord</a>
+      <a href="admin/" class="footer-link">Admin</a>
+      <a href="overlay/" class="footer-link">Overlay</a>
+      <a href="setup.html" class="footer-link">Setup</a>
     </div>
-    <p class="footer-copy">© 2026 TCG Queue System. Demo-version.</p>
+    <p class="footer-copy">© 2026 DITT FÖRETAGSNAMN. Alla rättigheter förbehållna.</p>
   </footer>
 </body>
 </html>
