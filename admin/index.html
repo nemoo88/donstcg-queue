@@ -16,6 +16,7 @@
       --success: #22c55e;
       --live: #ef4444;
       --warning: #f59e0b;
+      --duck: #ff6b9d;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -110,6 +111,7 @@
     }
     .btn-success { background: var(--success); color: white; }
     .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-duck { background: var(--duck); color: white; }
     
     .waiting-section {
       background: var(--bg-card);
@@ -127,6 +129,10 @@
       border: 1px solid var(--border);
       border-radius: 12px;
     }
+    .waiting-item.duckrace {
+      border-color: var(--duck);
+      background: rgba(255, 107, 157, 0.05);
+    }
     .queue-position {
       width: 36px; height: 36px;
       background: rgba(59, 130, 246, 0.2);
@@ -138,9 +144,15 @@
       font-weight: 800;
       color: var(--accent);
     }
+    .queue-position.duck {
+      background: rgba(255, 107, 157, 0.2);
+      border-color: var(--duck);
+      color: var(--duck);
+    }
     .queue-info { flex: 1; }
     .queue-username { font-weight: 700; margin-bottom: 4px; }
     .queue-product { font-size: 13px; color: var(--text-secondary); }
+    .queue-note { font-size: 11px; color: var(--text-secondary); font-style: italic; margin-top: 4px; }
     .btn-open {
       padding: 10px 20px;
       background: var(--accent);
@@ -150,6 +162,9 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
+    }
+    .btn-open.duck {
+      background: var(--duck);
     }
     
     .sidebar { display: flex; flex-direction: column; gap: 24px; }
@@ -162,7 +177,7 @@
     .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
     .form-group { margin-bottom: 16px; }
     .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
-    .form-input {
+    .form-input, .form-textarea {
       width: 100%;
       padding: 14px 16px;
       background: var(--bg-primary);
@@ -170,7 +185,13 @@
       border-radius: 10px;
       color: var(--text-primary);
       font-size: 15px;
+      font-family: inherit;
     }
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
     .btn-primary {
       width: 100%;
       padding: 14px;
@@ -181,6 +202,18 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
+    }
+    .btn-duck-add {
+      width: 100%;
+      padding: 14px;
+      background: var(--duck);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
     }
     
     .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
@@ -194,6 +227,33 @@
     }
     .source-demo { background: var(--warning); color: #000; }
     .source-manual { background: var(--text-secondary); color: #000; }
+    .source-duck { background: var(--duck); color: #fff; }
+    
+    .toggle-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .toggle-btn {
+      flex: 1;
+      padding: 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .toggle-btn.duck-toggle.active {
+      background: var(--duck);
+      border-color: var(--duck);
+    }
   </style>
 </head>
 <body>
@@ -206,8 +266,8 @@
   </header>
 
   <div class="demo-banner">
-    ⚠️ <strong>Demo-läge:</strong> All data sparas endast i denna webbläsare och försvinner vid reload. 
-    I fullversionen kopplas detta till din Shopify-butik och all data sparas permanent.
+    ⚠️ <strong>Demo-läge:</strong> All data sparas endast i denna webbläsare. 
+    I fullversionen kopplas detta till din Shopify-butik med automatiska ordrar.
   </div>
 
   <main class="main">
@@ -240,6 +300,7 @@
           <div class="current-label">Öppnar nu</div>
           <div class="current-user" id="current-user">-</div>
           <div class="current-product" id="current-product">-</div>
+          <div id="current-note" style="font-size: 14px; color: var(--text-secondary); margin-top: 8px; font-style: italic;"></div>
           <div style="margin-top: 24px;">
             <button class="btn btn-success" onclick="completeCurrent()">✓ Klar - Nästa</button>
             <button class="btn btn-secondary" onclick="skipCurrent()">→ Skippa</button>
@@ -249,22 +310,23 @@
 
       <div class="waiting-section">
         <div class="section-title">
-          Kölista (väntar på att öppnas)
+          Kölista
           <span style="font-size: 14px; color: var(--text-secondary);"><span id="waiting-count">0</span> ordrar</span>
         </div>
         <div class="waiting-list" id="waiting-list">
           <div class="empty-state">
             <p>Inga ordrar i kö.</p>
-            <p style="font-size: 13px; margin-top: 8px;">Lägg till en test-order med formuläret till höger →</p>
+            <p style="font-size: 13px; margin-top: 8px;">Lägg till med formuläret till höger →</p>
           </div>
         </div>
       </div>
     </div>
 
     <aside class="sidebar">
-      <div class="panel">
-        <div class="panel-title">Lägg till order (Demo)</div>
-        <form id="add-form" onsubmit="addOrder(event)">
+      <!-- Rip n Ship Panel -->
+      <div class="panel" id="panel-ripship">
+        <div class="panel-title">Lägg till Rip n Ship</div>
+        <form id="add-form" onsubmit="addOrder(event, 'manual')">
           <div class="form-group">
             <label class="form-label">Användarnamn / Twitch</label>
             <input type="text" class="form-input" id="input-username" placeholder="t.ex. @DonTCG" required>
@@ -279,43 +341,47 @@
           </div>
           <button type="submit" class="btn-primary">+ Lägg till i kö</button>
         </form>
+        <button class="btn-duck-add" onclick="showDuckPanel()">🦆 Lägg till Duckrace/Annat istället</button>
+      </div>
+
+      <!-- Duckrace/Annat Panel -->
+      <div class="panel" id="panel-duck" style="display: none;">
+        <div class="panel-title">Lägg till Duckrace / Annat</div>
+        <form id="duck-form" onsubmit="addOrder(event, 'duck')">
+          <div class="form-group">
+            <label class="form-label">Användarnamn / Twitch</label>
+            <input type="text" class="form-input" id="duck-username" placeholder="t.ex. @DonTCG" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vad de köpt / deltar i</label>
+            <input type="text" class="form-input" id="duck-product" placeholder="t.ex. Duckrace #5" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Antal / info (valfritt)</label>
+            <input type="text" class="form-input" id="duck-info" placeholder="t.ex. 3 ankor, nummer #12, #15, #18">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Anteckningar / övrigt</label>
+            <textarea class="form-textarea" id="duck-notes" placeholder="Valfri info..."></textarea>
+          </div>
+          <button type="submit" class="btn-duck-add">🦆 Lägg till</button>
+        </form>
+        <button class="btn-primary" onclick="showRipShipPanel()" style="margin-top: 12px; background: var(--bg-secondary); color: var(--text-primary);">← Tillbaka till Rip n Ship</button>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Snabbval (Demo)</div>
+        <div class="panel-title">Snabbval</div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button class="btn btn-secondary" onclick="quickAdd('Lost Origin Booster Box', 1199)" style="text-align: left;">📦 Booster Box — 1 199 kr</button>
-          <button class="btn btn-secondary" onclick="quickAdd('Brilliant Stars ETB', 449)" style="text-align: left;">🎁 ETB — 449 kr</button>
-          <button class="btn btn-secondary" onclick="quickAdd('Single Booster Pack', 45)" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
-          <button class="btn btn-secondary" onclick="quickAdd('Duckrace Entry', 50)" style="text-align: left;">🦆 Duckrace — 50 kr (filtreras bort)</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Lost Origin Booster Box', 1199, 'manual')" style="text-align: left;">📦 Booster Box — 1 199 kr</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Brilliant Stars ETB', 449, 'manual')" style="text-align: left;">🎁 ETB — 449 kr</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Single Booster Pack', 45, 'manual')" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
+          <button class="btn btn-duck" onclick="quickAdd('Duckrace Entry', 50, 'duck')" style="text-align: left;">🦆 Duckrace — 50 kr</button>
         </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Om fullversionen</div>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
-          I den riktiga versionen:
-        </p>
-        <ul style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; padding-left: 20px;">
-          <li>Ordrar kommer automatiskt från Shopify</li>
-          <li>Duckrace filtreras bort automatiskt</li>
-          <li>Data sparas permanent</li>
-          <li>Fungerar från vilken enhet som helst</li>
-          <li>OBS-overlay uppdateras i realtid</li>
-        </ul>
       </div>
     </aside>
   </main>
 
   <script>
-    // 🦆 DUCKRACE - filtreras bort från kön
-    const DUCKRACE_KEYWORDS = ['duck', 'duckrace', 'anka', 'race', 'and', 'andrace'];
-
-    function isDuckrace(productName) {
-      const lower = productName.toLowerCase();
-      return DUCKRACE_KEYWORDS.some(keyword => lower.includes(keyword));
-    }
-
     let waitingQueue = JSON.parse(localStorage.getItem('tcg_waiting_queue')) || [];
     let currentOrder = JSON.parse(localStorage.getItem('tcg_current_order')) || null;
     let completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
@@ -328,10 +394,24 @@
       localStorage.setItem('tcg_revenue', revenue);
     }
 
+    function showDuckPanel() {
+      document.getElementById('panel-ripship').style.display = 'none';
+      document.getElementById('panel-duck').style.display = 'block';
+    }
+
+    function showRipShipPanel() {
+      document.getElementById('panel-duck').style.display = 'none';
+      document.getElementById('panel-ripship').style.display = 'block';
+    }
+
     function render() {
-      document.getElementById('stat-waiting').textContent = waitingQueue.length;
+      // Räkna bara Rip n Ship i statistiken (inte Duckrace)
+      const ripShipQueue = waitingQueue.filter(o => o.type !== 'duck');
+      const duckQueue = waitingQueue.filter(o => o.type === 'duck');
+      
+      document.getElementById('stat-waiting').textContent = ripShipQueue.length;
       document.getElementById('stat-completed').textContent = completed;
-      document.getElementById('stat-time').textContent = (waitingQueue.length * 5) + ' min';
+      document.getElementById('stat-time').textContent = (ripShipQueue.length * 5) + ' min';
       document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
       
       document.getElementById('waiting-count').textContent = waitingQueue.length;
@@ -341,19 +421,21 @@
         waitingList.innerHTML = `
           <div class="empty-state">
             <p>Inga ordrar i kö.</p>
-            <p style="font-size: 13px; margin-top: 8px;">Lägg till en test-order med formuläret till höger →</p>
+            <p style="font-size: 13px; margin-top: 8px;">Lägg till med formuläret till höger →</p>
           </div>
         `;
       } else {
         waitingList.innerHTML = waitingQueue.map((order, index) => `
-          <div class="waiting-item">
-            <div class="queue-position">${index + 1}</div>
+          <div class="waiting-item ${order.type === 'duck' ? 'duckrace' : ''}">
+            <div class="queue-position ${order.type === 'duck' ? 'duck' : ''}">${index + 1}</div>
             <div class="queue-info">
               <div class="queue-username">${order.username}</div>
               <div class="queue-product">${order.product}</div>
+              ${order.info ? `<div class="queue-note">📌 ${order.info}</div>` : ''}
+              ${order.notes ? `<div class="queue-note">📝 ${order.notes}</div>` : ''}
             </div>
-            <span class="source-badge source-${order.source}">${order.source === 'demo' ? 'DEMO' : 'MANUELL'}</span>
-            <button class="btn-open" onclick="openOrder(${index})">ÖPPNA</button>
+            <span class="source-badge source-${order.type === 'duck' ? 'duck' : order.source}">${order.type === 'duck' ? '🦆 DUCK' : order.source === 'demo' ? 'DEMO' : 'MANUELL'}</span>
+            <button class="btn-open ${order.type === 'duck' ? 'duck' : ''}" onclick="openOrder(${index})">ÖPPNA</button>
           </div>
         `).join('');
       }
@@ -364,11 +446,14 @@
       
       if (currentOrder) {
         currentSection.classList.remove('inactive');
-        currentSection.style.borderColor = 'var(--success)';
-        currentStatus.textContent = 'LIVE NU';
+        currentSection.style.borderColor = currentOrder.type === 'duck' ? 'var(--duck)' : 'var(--success)';
+        currentStatus.textContent = currentOrder.type === 'duck' ? '🦆 DUCKRACE/ANNAT' : 'LIVE NU';
         currentOrderDiv.style.display = 'block';
         document.getElementById('current-user').textContent = currentOrder.username;
         document.getElementById('current-product').textContent = currentOrder.product;
+        document.getElementById('current-note').textContent = 
+          (currentOrder.info ? `📌 ${currentOrder.info} ` : '') + 
+          (currentOrder.notes ? `📝 ${currentOrder.notes}` : '');
       } else {
         currentSection.classList.add('inactive');
         currentSection.style.borderColor = 'var(--border)';
@@ -379,54 +464,67 @@
       saveAll();
     }
 
-    function addOrder(e) {
+    function addOrder(e, type) {
       e.preventDefault();
-      const username = document.getElementById('input-username').value;
-      const product = document.getElementById('input-product').value;
-      const price = parseInt(document.getElementById('input-price').value) || 0;
-
-      // 🦆 Kolla om det är Duckrace
-      if (isDuckrace(product)) {
-        alert(`🦆 "${product}" är en Duckrace-produkt och läggs inte i Rip n Ship-kön.\n\nI fullversionen hanteras dessa separat.`);
-        // I demo: lägg till ändå men markera som duckrace
-        waitingQueue.push({
-          id: Date.now(),
-          username: username.startsWith('@') ? username : '@' + username,
-          product: product + ' [DUCKRACE]',
-          price: price,
-          timestamp: Date.now(),
-          source: 'demo'
-        });
+      
+      let username, product, price, info, notes;
+      
+      if (type === 'duck') {
+        username = document.getElementById('duck-username').value;
+        product = document.getElementById('duck-product').value;
+        info = document.getElementById('duck-info').value;
+        notes = document.getElementById('duck-notes').value;
+        price = 0; // Duckrace har ofta fast pris eller hanteras separat
       } else {
-        waitingQueue.push({
-          id: Date.now(),
-          username: username.startsWith('@') ? username : '@' + username,
-          product: product,
-          price: price,
-          timestamp: Date.now(),
-          source: 'demo'
-        });
+        username = document.getElementById('input-username').value;
+        product = document.getElementById('input-product').value;
+        price = parseInt(document.getElementById('input-price').value) || 0;
       }
       
-      document.getElementById('add-form').reset();
+      const order = {
+        id: Date.now(),
+        username: username.startsWith('@') ? username : '@' + username,
+        product: product,
+        price: price,
+        type: type,
+        info: info || null,
+        notes: notes || null,
+        timestamp: Date.now(),
+        source: 'manual'
+      };
+      
+      waitingQueue.push(order);
+      
+      // Rensa formulär
+      if (type === 'duck') {
+        document.getElementById('duck-form').reset();
+      } else {
+        document.getElementById('add-form').reset();
+      }
+      
       render();
     }
 
-    function quickAdd(product, price) {
+    function quickAdd(product, price, type) {
       const username = prompt('Användarnamn:');
       if (!username) return;
       
       const cleanUsername = username.startsWith('@') ? username : '@' + username;
       
-      if (isDuckrace(product)) {
-        alert(`🦆 "${product}" är en Duckrace-produkt och läggs inte i Rip n Ship-kön.\n\nI fullversionen hanteras dessa separat.`);
+      if (type === 'duck') {
+        const info = prompt('Info (antal ankor, nummer, etc.):') || '';
+        const notes = prompt('Anteckningar (valfritt):') || '';
+        
         waitingQueue.push({
           id: Date.now(),
           username: cleanUsername,
-          product: product + ' [DUCKRACE]',
+          product: product,
           price: price,
+          type: 'duck',
+          info: info,
+          notes: notes,
           timestamp: Date.now(),
-          source: 'demo'
+          source: 'manual'
         });
       } else {
         waitingQueue.push({
@@ -434,8 +532,9 @@
           username: cleanUsername,
           product: product,
           price: price,
+          type: 'manual',
           timestamp: Date.now(),
-          source: 'demo'
+          source: 'manual'
         });
       }
       
@@ -455,10 +554,14 @@
     function completeCurrent() {
       if (!currentOrder) return;
       
-      revenue += currentOrder.price || 0;
+      // Räkna bara Rip n Ship i omsättningen
+      if (currentOrder.type !== 'duck') {
+        revenue += currentOrder.price || 0;
+      }
       completed++;
       currentOrder = null;
       
+      // Hämta nästa (oavsett typ)
       if (waitingQueue.length > 0) {
         currentOrder = waitingQueue.shift();
       }
