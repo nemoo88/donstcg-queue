@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Don's TCG</title>
+  <title>Admin - TCG Queue System (Demo)</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -282,16 +282,16 @@
 </head>
 <body>
   <header class="header">
-    <div class="logo">🎴 Don's TCG Admin (Demo)</div>
+    <div class="logo">🎴 TCG Queue Admin (Demo)</div>
     <div>
-      <a href="/donstcg-queue/" style="color: var(--text-secondary); text-decoration: none; margin-right: 16px;">Hemsida</a>
-      <a href="/donstcg-queue/overlay/" target="_blank" style="color: var(--text-secondary); text-decoration: none;">Overlay</a>
+      <a href="../" style="color: var(--text-secondary); text-decoration: none; margin-right: 16px;">Hemsida</a>
+      <a href="../overlay/" target="_blank" style="color: var(--text-secondary); text-decoration: none;">Overlay</a>
     </div>
   </header>
 
   <div class="demo-banner">
-    ⚠️ <strong>Demo-läge:</strong> All data sparas endast i denna webbläsare. 
-    I fullversionen kopplas detta till din Shopify-butik med automatiska ordrar.
+    ⚠️ <strong>Demo-läge:</strong> All data sparas endast i denna webbläsare och försvinner vid reload. 
+    I fullversionen kopplas detta till din butik med automatiska ordrar.
   </div>
 
   <main class="main">
@@ -353,11 +353,11 @@
         <form id="add-form" onsubmit="addOrder(event, 'ripship')">
           <div class="form-group">
             <label class="form-label">Användarnamn / Twitch</label>
-            <input type="text" class="form-input" id="input-username" placeholder="t.ex. @DonTCG" required>
+            <input type="text" class="form-input" id="input-username" placeholder="t.ex. @Användare" required>
           </div>
           <div class="form-group">
             <label class="form-label">Produkt</label>
-            <input type="text" class="form-input" id="input-product" placeholder="t.ex. Lost Origin Booster Box" required>
+            <input type="text" class="form-input" id="input-product" placeholder="t.ex. Booster Box" required>
           </div>
           <div class="form-group">
             <label class="form-label">Pris (kr)</label>
@@ -378,7 +378,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Deltagare / Vem <span style="font-weight: 400; color: var(--text-secondary);">(valfritt)</span></label>
-            <input type="text" class="form-input" id="event-username" placeholder="t.ex. @DonTCG eller lämna tom">
+            <input type="text" class="form-input" id="event-username" placeholder="t.ex. @Användare eller lämna tom">
             <div class="form-hint">Lämna tom om flera deltar, blir automatiskt @alla</div>
           </div>
           <div class="form-group">
@@ -402,9 +402,9 @@
       <div class="panel">
         <div class="panel-title">Snabbval</div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button class="btn btn-secondary" onclick="quickAdd('Lost Origin Booster Box', 1199, 'ripship')" style="text-align: left;">📦 Booster Box — 1 199 kr</button>
-          <button class="btn btn-secondary" onclick="quickAdd('Brilliant Stars ETB', 449, 'ripship')" style="text-align: left;">🎁 ETB — 449 kr</button>
-          <button class="btn btn-secondary" onclick="quickAdd('Single Booster Pack', 45, 'ripship')" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Booster Box', 1199, 'ripship')" style="text-align: left;">📦 Booster Box — 1 199 kr</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Elite Trainer Box', 449, 'ripship')" style="text-align: left;">🎁 ETB — 449 kr</button>
+          <button class="btn btn-secondary" onclick="quickAdd('Booster Pack', 45, 'ripship')" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
           <button class="btn btn-event" onclick="quickAdd('Duckrace', 50, 'event')" style="text-align: left;">🦆 Duckrace — 50 kr</button>
         </div>
       </div>
@@ -435,14 +435,12 @@
     }
 
     function render() {
-      // Räkna bara Rip n Ship i "Väntar" och est. tid
       const ripShipQueue = waitingQueue.filter(o => o.type === 'ripship');
       const eventQueue = waitingQueue.filter(o => o.type === 'event');
       
       document.getElementById('stat-waiting').textContent = ripShipQueue.length;
       document.getElementById('stat-completed').textContent = completed;
       document.getElementById('stat-time').textContent = (ripShipQueue.length * 5) + ' min';
-      // Omsättning: Räknar ALLA ordrar (inklusive event med pris)
       document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
       
       document.getElementById('waiting-count').textContent = waitingQueue.length;
@@ -521,7 +519,7 @@
         username: username,
         product: product,
         price: price,
-        type: type, // 'ripship' eller 'event'
+        type: type,
         info: info || null,
         notes: notes || null,
         timestamp: Date.now(),
@@ -590,7 +588,6 @@
     function completeCurrent() {
       if (!currentOrder) return;
       
-      // Lägg till pris för ALLA typer (inklusive event) till omsättning
       revenue += currentOrder.price || 0;
       completed++;
       currentOrder = null;
