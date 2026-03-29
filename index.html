@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Don's TCG - Live Rip n Ship | Pokémon Cards</title>
+  <title>TCG Queue - Live Rip n Ship System</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -91,36 +91,17 @@
       color: var(--text-primary);
     }
     
-    .live-badge {
-      display: flex;
+    .badge {
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 100px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--live);
-      animation: pulse-border 2s infinite;
-    }
-    
-    @keyframes pulse-border {
-      0%, 100% { border-color: rgba(239, 68, 68, 0.3); }
-      50% { border-color: rgba(239, 68, 68, 0.6); }
-    }
-    
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--live);
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
+      color: var(--accent);
     }
     
     .hero {
@@ -255,6 +236,41 @@
       text-decoration: underline;
     }
     
+    .features {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: left;
+    }
+    
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+    
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    
     .footer {
       padding: 60px 24px;
       background: var(--bg-card);
@@ -307,14 +323,14 @@
     <div class="nav-content">
       <div class="logo">
         <div class="logo-icon">🎴</div>
-        <span>Don's TCG</span>
+        <span>TCG Queue</span>
       </div>
       <div class="nav-links">
-        <a href="/donstcg-queue/admin/" class="nav-link">Admin</a>
-        <a href="/donstcg-queue/overlay/" target="_blank" class="nav-link">Overlay</a>
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          LIVE
+        <a href="admin/" class="nav-link">Admin Demo</a>
+        <a href="overlay/" target="_blank" class="nav-link">Overlay Demo</a>
+        <div class="badge">
+          <span>🚀</span>
+          Demo
         </div>
       </div>
     </div>
@@ -324,49 +340,70 @@
     <div class="hero-content">
       <div class="hero-badge">
         <span>🔥</span>
-        Live Rip n Ship
+        Live Rip n Ship System
       </div>
-      <h1>Live Rip n Ship</h1>
-      <p>Köp Pokémon-kort och se dem öppnas live på stream! Dina kort skickas direkt till dig efter opening.</p>
+      <h1>TCG Queue System</h1>
+      <p>Komplett kösystem för TCG-streamers. Hantera ordrar, visa kö live i streamen, och koppla till din butik.</p>
       
       <div class="hero-cta">
-        <button class="btn btn-primary" onclick="alert('Detta är en demo. I fullversionen kopplas detta till din Shopify-butik.')">
-          🛒 Köp nu (Demo)
-        </button>
-        <a href="https://twitch.tv/donstcg" target="_blank" class="btn btn-secondary">
-          📺 Titta live
+        <a href="admin/" class="btn btn-primary">
+          🎮 Testa Admin Demo
+        </a>
+        <a href="overlay/" target="_blank" class="btn btn-secondary">
+          📺 Se Overlay Demo
         </a>
       </div>
 
       <div class="demo-notice">
         <h3>⚠️ Detta är en demo-version</h3>
         <p>
-          Vad du ser här är en förhandsvisning av hur systemet fungerar. 
-          Alla "köp" sparas endast lokalt i din webbläsare.
+          All data sparas endast lokalt i din webbläsare och försvinner när du laddar om sidan.
         </p>
         <p>
           <strong>Fullversionen inkluderar:</strong><br>
-          • Koppling till din riktiga Shopify-butik<br>
+          • Koppling till Shopify/WooCommerce<br>
+          • Permanent datalagring<br>
           • Automatiska ordrar från köp<br>
-          • Permanent lagring av kön<br>
-          • Admin-panel för att styra allt<br>
-          • OBS-overlay för din stream
+          • OBS-overlay för stream<br>
+          • Event-hantering (Duckrace, Giveaway, etc.)
         </p>
         <p>
-          <a href="/donstcg-queue/admin/">Testa admin-panelen →</a>
+          <a href="mailto:contact@example.com">Kontakta för fullversion →</a>
         </p>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🎮</div>
+          <div class="feature-title">Live Admin</div>
+          <div class="feature-desc">Styr kön i realtid. Markera ordrar som klara, skippa, eller lägg till manuellt.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📺</div>
+          <div class="feature-title">OBS Overlay</div>
+          <div class="feature-desc">Visa aktuell order och kön direkt i din stream. Automatisk uppdatering.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛒</div>
+          <div class="feature-title">Shopify-integration</div>
+          <div class="feature-desc">Automatiska ordrar från din butik. Separat hantering för events.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Statistik</div>
+          <div class="feature-desc">Följ omsättning, antal klara ordrar, och estimerad tid i realtid.</div>
+        </div>
       </div>
     </div>
   </section>
 
   <footer class="footer">
     <div class="footer-links">
-      <a href="https://twitch.tv/donstcg" target="_blank" class="footer-link">Twitch</a>
-      <a href="#" class="footer-link">Discord</a>
-      <a href="#" class="footer-link">Instagram</a>
-      <a href="mailto:don@donstcg.com" class="footer-link">Kontakt</a>
+      <a href="#" class="footer-link">Demo</a>
+      <a href="#" class="footer-link">Funktioner</a>
+      <a href="mailto:contact@example.com" class="footer-link">Kontakt</a>
     </div>
-    <p class="footer-copy">© 2024 Don's TCG. Alla rättigheter förbehållna.</p>
+    <p class="footer-copy">© 2024 TCG Queue System. Demo-version.</p>
   </footer>
 </body>
 </html>
