@@ -1,215 +1,127 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBS Overlay - Don's TCG Queue</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-primary: rgba(10, 10, 10, 0.95);
-            --bg-card: rgba(20, 20, 20, 0.98);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.6);
-            --accent: #ffffff;
-            --live: #ef4444;
-            --success: #22c55e;
+        // 🔄 BroadcastChannel för real-time sync
+        let broadcastChannel = null;
+        try {
+            broadcastChannel = new BroadcastChannel('tcg_queue_channel');
+        } catch (e) {
+            console.warn('BroadcastChannel inte tillgängligt');
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: transparent;
-            color: var(--text-primary);
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-        }
-        .overlay-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 320px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-        .overlay-header {
-            background: var(--bg-card);
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 14px;
-        }
-        .live-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--live);
-        }
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--live);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .current-section {
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-            border-bottom: 1px solid var(--border);
-        }
-        .current-label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-        .current-user {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .current-product {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .now-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 12px;
-            padding: 4px 10px;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--success);
-        }
-        .queue-section {
-            padding: 16px 20px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .queue-title {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .queue-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-        }
-        .queue-position {
-            width: 24px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-        .queue-username {
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .queue-product {
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        .stats-footer {
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-    <div class="overlay-container">
-        <div class="overlay-header">
-            <div class="brand">🎴 DON'S TCG</div>
-            <div class="live-badge">
-                <span class="live-dot"></span>
-                LIVE
-            </div>
-        </div>
         
-        <div class="current-section">
-            <div class="current-label">Nu öppnas</div>
-            <div class="current-user" id="current-user">Väntar...</div>
-            <div class="current-product" id="current-product">-</div>
-            <div class="now-indicator" id="now-indicator" style="display: none;">
-                ✓ LIVE NU
-            </div>
-        </div>
-        
-        <div class="queue-section">
-            <div class="queue-title">
-                Nästa i kö
-                <span id="queue-count">0</span>
-            </div>
-            <div class="queue-list" id="queue-list">
-                <div class="empty-state">Ingen kö</div>
-            </div>
-        </div>
-        
-        <div class="stats-footer">
-            <div>⏱ Est. <span id="est-time">0 min</span></div>
-            <div>✓ Klara: <span id="completed-count">0</span></div>
-        </div>
-    </div>
+        function notifyOtherTabs() {
+            // Skicka meddelande via BroadcastChannel
+            if (broadcastChannel) {
+                broadcastChannel.postMessage({ type: 'queue-update', timestamp: Date.now() });
+            }
+            
+            // Trigga storage event manuellt (för backup)
+            localStorage.setItem('tcg_sync_trigger', Date.now().toString());
+        }
 
-    <script>
-        let queue = [];
-        let completed = 0;
-        
-        function loadData() {
-n            const savedQueue = localStorage.getItem('tcg_queue');\n            const savedCompleted = localStorage.getItem('tcg_completed');\n            \n            if (savedQueue) queue = JSON.parse(savedQueue);\n            if (savedCompleted) completed = parseInt(savedCompleted);\n            \n            render();\n        }\n        \n        function render() {\n            const currentUser = document.getElementById('current-user');\n            const currentProduct = document.getElementById('current-product');\n            const nowIndicator = document.getElementById('now-indicator');\n            \n            if (queue.length > 0) {\n                const order = queue[0];\n                currentUser.textContent = order.username;\n                currentProduct.textContent = order.product;\n                nowIndicator.style.display = 'inline-flex';\n            } else {\n                currentUser.textContent = 'Väntar på order...';\n                currentProduct.textContent = '-';\n                nowIndicator.style.display = 'none';\n            }\n            \n            const remaining = Math.max(0, queue.length - 1);\n            document.getElementById('queue-count').textContent = remaining + ' personer';\n            \n            const queueList = document.getElementById('queue-list');\n            if (remaining === 0) {\n                queueList.innerHTML = '<div class=\"empty-state\">Ingen kö just nu</div>';\n            } else {\n                queueList.innerHTML = queue.slice(1, 6).map((order, index) => `\n                    <div class=\"queue-item\">\n                        <div class=\"queue-position\">${index + 1}</div>\n                        <div>\n                            <div class=\"queue-username\">${order.username}</div>\n                            <div class=\"queue-product\">${order.product}</div>\n                        </div>\n                    </div>\n                `).join('');\n            }\n            \n            document.getElementById('est-time').textContent = (remaining * 5) + ' min';\n            document.getElementById('completed-count').textContent = completed;\n        }\n        \n        window.addEventListener('storage', loadData);\n        setInterval(loadData, 2000);\n        loadData();\n    </script>\n</body>\n</html>
+        let queue = JSON.parse(localStorage.getItem('tcg_queue')) || [];
+        let completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
+        let revenue = parseInt(localStorage.getItem('tcg_revenue')) || 0;
+
+        function render() {
+            const currentUser = document.getElementById('current-user');
+            const currentProduct = document.getElementById('current-product');
+            const currentActions = document.getElementById('current-actions');
+            const currentOrder = document.getElementById('current-order');
+            
+            if (queue.length > 0) {
+                const order = queue[0];
+                currentUser.textContent = order.username;
+                currentProduct.textContent = order.product;
+                currentActions.style.display = 'block';
+                currentOrder.classList.remove('empty');
+            } else {
+                currentUser.textContent = 'Ingen aktiv order';
+                currentProduct.textContent = '-';
+                currentActions.style.display = 'none';
+                currentOrder.classList.add('empty');
+            }
+            
+            const remaining = Math.max(0, queue.length - 1);
+            document.getElementById('queue-count').textContent = remaining;
+            document.getElementById('stat-queue').textContent = remaining;
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('stat-time').textContent = (remaining * 5) + ' min';
+            document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
+            
+            const queueList = document.getElementById('queue-list');
+            if (remaining === 0) {
+                queueList.innerHTML = '<div class="empty-state"><p>Kön är tom.</p></div>';
+                return;
+            }
+            
+            queueList.innerHTML = queue.slice(1).map((order, index) => `
+                <div class="queue-item">
+                    <div class="queue-position">${index + 1}</div>
+                    <div class="queue-info">
+                        <div class="queue-username">${order.username}</div>
+                        <div class="queue-product">${order.product}</div>
+                    </div>
+                    <span class="source-badge source-${order.source || 'manual'}">${order.source === 'shopify' ? 'SHOPIFY' : order.source === 'demo' ? 'DEMO' : 'MANUELL'}</span>
+                    <button onclick="removeOrder(${index + 1})" style="background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer;">🗑</button>
+                </div>
+            `).join('');
+            
+            localStorage.setItem('tcg_queue', JSON.stringify(queue));
+            localStorage.setItem('tcg_completed', completed);
+            localStorage.setItem('tcg_revenue', revenue);
+            
+            notifyOtherTabs(); // 🔄 Meddela andra flikar
+        }
+
+        function addOrder(e) {
+            e.preventDefault();
+            queue.push({
+                id: Date.now(),
+                username: document.getElementById('input-username').value,
+                product: document.getElementById('input-product').value,
+                price: parseInt(document.getElementById('input-price').value) || 0,
+                timestamp: Date.now(),
+                source: 'manual'
+            });
+            document.getElementById('add-form').reset();
+            render();
+        }
+
+        function quickAdd(product, price) {
+            const username = prompt('Användarnamn:');
+            if (username) {
+                queue.push({
+                    id: Date.now(),
+                    username: username.startsWith('@') ? username : '@' + username,
+                    product: product,
+                    price: price,
+                    timestamp: Date.now(),
+                    source: 'manual'
+                });
+                render();
+            }
+        }
+
+        function completeCurrent() {
+            if (queue.length > 0) {
+                revenue += queue[0].price || 0;
+                queue.shift();
+                completed++;
+                render();
+            }
+        }
+
+        function skipCurrent() {
+            if (queue.length > 1) {
+                const order = queue.shift();
+                queue.push(order);
+                render();
+            }
+        }
+
+        function removeOrder(index) {
+            if (confirm('Ta bort order?')) {
+                queue.splice(index, 1);
+                render();
+            }
+        }
+
+        render();
