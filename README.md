@@ -9,7 +9,7 @@
 
 ## 🚀 Demo
 
-Testa systemet live: **[GitHub Pages Demo](https://ditt-användarnamn.github.io/tcg-queue-demo/)**
+Testa systemet live: **[GitHub Pages Demo](https://nemoo88.github.io/tcg-queue-demo/)**
 
 ### Vad ingår i demon:
 
