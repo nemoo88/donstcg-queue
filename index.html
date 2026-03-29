@@ -16,7 +16,6 @@
             --border: #2a2a2a;
             --accent: #ffffff;
             --shopify: #95bf47;
-            --live: #ef4444;
         }
         
         body {
@@ -26,7 +25,6 @@
             min-height: 100vh;
         }
         
-        /* Header */
         .header {
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
@@ -47,13 +45,13 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 100px;
             font-size: 13px;
-            color: var(--live);
+            color: #ef4444;
         }
         
         .live-dot {
             width: 8px;
             height: 8px;
-            background: var(--live);
+            background: #ef4444;
             border-radius: 50%;
             animation: pulse 1.5s infinite;
         }
@@ -90,7 +88,6 @@
             margin: 0 auto 32px;
         }
         
-        /* Produkter */
         .products {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -127,7 +124,6 @@
         .product-price { font-size: 24px; font-weight: 700; color: var(--shopify); margin-bottom: 16px; }
         .product-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
         
-        /* Köp-knappar */
         .buy-button-container { margin-top: 16px; }
         
         .btn-buy {
@@ -148,7 +144,6 @@
             box-shadow: 0 8px 25px rgba(149, 191, 71, 0.3);
         }
         
-        /* Admin länkar */
         .admin-section {
             text-align: center;
             margin-top: 60px;
@@ -186,7 +181,6 @@
             color: var(--text-primary);
         }
         
-        /* Demo-notis */
         .demo-notice {
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid rgba(245, 158, 11, 0.3);
@@ -200,7 +194,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="logo">🎴 Don's TCG</div>
         <div class="live-badge">
@@ -210,27 +203,22 @@
     </header>
 
     <div class="container">
-        <!-- Demo-notis (visas bara i demo-läge) -->
         <div class="demo-notice" id="demo-notice">
             ⚠️ Demo-läge: Köp går till test. För att aktivera riktiga köp behöver Don ansluta sin Shopify.
         </div>
 
-        <!-- Hero -->
         <div class="hero">
             <h1>Live Rip n Ship</h1>
             <p>Köp Pokémon-kort och se dem öppnas live på stream! Dina kort skickas direkt till dig efter opening.</p>
         </div>
 
-        <!-- Produkter -->
         <div class="products">
             <div class="product-card">
                 <div class="product-image">📦</div>
                 <div class="product-title">Lost Origin Booster Box</div>
                 <div class="product-price">1 199 kr</div>
                 <div class="product-desc">36 booster packs. Öppnas live på stream!</div>
-                <div id="product-1" class="buy-button-container">
-                    <!-- Shopify Buy Button hamnar här -->
-                </div>
+                <div id="product-1" class="buy-button-container"></div>
             </div>
 
             <div class="product-card">
@@ -250,7 +238,6 @@
             </div>
         </div>
 
-        <!-- Admin-sektion -->
         <div class="admin-section">
             <p style="color: var(--text-secondary); margin-bottom: 10px;">För Don (streamer):</p>
             <div class="admin-links">
@@ -260,20 +247,13 @@
         </div>
     </div>
 
-    <!-- Shopify Buy Button SDK -->
     <script src="https://sdks.shopifycdn.com/buy-button/latest/buybutton.js"></script>
     
     <script>
-        // 🔧 KONFIGURATION - Byt ut dessa när Don ger dig hans uppgifter
         const SHOPIFY_CONFIG = {
-            // Demo-läge: false = använd Shopify, true = demo-knappar
             demoMode: true,
-            
-            // Don's Shopify-uppgifter (han får detta från Buy Button i sin admin)
-            domain: 'donstcg.myshopify.com', // Exempel
-            storefrontAccessToken: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // Exempel
-            
-            // Produkt-ID:n från Don's Shopify
+            domain: 'donstcg.myshopify.com',
+            storefrontAccessToken: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
             products: [
                 { id: '123456789', node: 'product-1', name: 'Lost Origin Booster Box', price: 1199 },
                 { id: '123456790', node: 'product-2', name: 'Brilliant Stars ETB', price: 449 },
@@ -281,22 +261,15 @@
             ]
         };
 
-        // Initialisera köp-knappar
         function initShopifyButtons() {
             if (SHOPIFY_CONFIG.demoMode) {
-                // Demo-läge: Enkla knappar som simulerar köp
                 SHOPIFY_CONFIG.products.forEach(product => {
                     const container = document.getElementById(product.node);
-                    container.innerHTML = `
-                        <button class="btn-buy" onclick="handleDemoBuy('${product.name}', ${product.price})">
-                            KÖP NU - Öppnas Live
-                        </button>
-                    `;
+                    container.innerHTML = `<button class="btn-buy" onclick="handleDemoBuy('${product.name}', ${product.price})">KÖP NU - Öppnas Live</button>`;
                 });
                 return;
             }
 
-            // Riktig Shopify-integration
             const client = ShopifyBuy.buildClient({
                 domain: SHOPIFY_CONFIG.domain,
                 storefrontAccessToken: SHOPIFY_CONFIG.storefrontAccessToken
@@ -338,14 +311,12 @@
             });
         }
 
-        // Hantera demo-köp
         function handleDemoBuy(productName, price) {
             const username = prompt('Ange ditt Twitch-namn eller email:');
             if (!username) return;
 
-            // Lägg till i kö-systemet (localStorage)
-            let queue = JSON.parse(localStorage.getItem('tcg_queue')) || [];
-            queue.push({
+            let waitingQueue = JSON.parse(localStorage.getItem('tcg_waiting_queue')) || [];
+            waitingQueue.push({
                 id: Date.now(),
                 username: username.startsWith('@') ? username : '@' + username,
                 product: productName,
@@ -353,12 +324,12 @@
                 timestamp: Date.now(),
                 source: 'demo'
             });
-            localStorage.setItem('tcg_queue', JSON.stringify(queue));
+            localStorage.setItem('tcg_waiting_queue', JSON.stringify(waitingQueue));
+            localStorage.setItem('tcg_sync_trigger', Date.now().toString());
 
-            alert(`✅ Demo-köp genomfört!\\n\\n${productName} har lagts till i kön.\\nDu kan se kön i admin-panelen och OBS-overlay.`);
+            alert(`✅ Demo-köp genomfört!\\n\\n${productName} har lagts till i kön.`);
         }
 
-        // Kör vid sidladdning
         initShopifyButtons();
     </script>
 </body>
