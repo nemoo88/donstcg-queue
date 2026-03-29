@@ -493,33 +493,46 @@
         notes = document.getElementById('duck-notes').value;
         price = 0;
         product = eventName;
+        
+        // 🦆 Manuellt tillagd Duckrace - visas i overlay!
+        const order = {
+          id: Date.now(),
+          username: username,
+          product: product,
+          price: price,
+          type: 'duck',
+          manualDuck: true, // ✅ Markerar att det är manuellt tillagd
+          info: info || null,
+          notes: notes || null,
+          timestamp: Date.now(),
+          source: 'manual'
+        };
+        
+        waitingQueue.push(order);
+        document.getElementById('duck-form').reset();
+        render();
+        return;
       } else {
         username = document.getElementById('input-username').value;
         product = document.getElementById('input-product').value;
         price = parseInt(document.getElementById('input-price').value) || 0;
-      }
-      
-      const order = {
-        id: Date.now(),
-        username: username,
-        product: product,
-        price: price,
-        type: type,
-        info: info || null,
-        notes: notes || null,
-        timestamp: Date.now(),
-        source: 'manual'
-      };
-      
-      waitingQueue.push(order);
-      
-      if (type === 'duck') {
-        document.getElementById('duck-form').reset();
-      } else {
+        
+        const order = {
+          id: Date.now(),
+          username: username.startsWith('@') ? username : '@' + username,
+          product: product,
+          price: price,
+          type: type,
+          info: null,
+          notes: null,
+          timestamp: Date.now(),
+          source: 'manual'
+        };
+        
+        waitingQueue.push(order);
         document.getElementById('add-form').reset();
+        render();
       }
-      
-      render();
     }
 
     function quickAdd(product, price, type) {
@@ -530,12 +543,14 @@
         const info = prompt('Info / Antal / Nummer:') || '';
         const notes = prompt('Anteckningar (valfritt):') || '';
         
+        // 🦆 Manuellt tillagd Duckrace - visas i overlay!
         waitingQueue.push({
           id: Date.now(),
           username: usernameInput ? (usernameInput.startsWith('@') ? usernameInput : '@' + usernameInput) : '@alla',
           product: eventName,
           price: price,
           type: 'duck',
+          manualDuck: true, // ✅ Markerar att det är manuellt tillagd
           info: info,
           notes: notes,
           timestamp: Date.now(),
