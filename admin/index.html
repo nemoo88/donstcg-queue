@@ -228,32 +228,6 @@
     .source-demo { background: var(--warning); color: #000; }
     .source-manual { background: var(--text-secondary); color: #000; }
     .source-duck { background: var(--duck); color: #fff; }
-    
-    .toggle-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .toggle-btn {
-      flex: 1;
-      padding: 12px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .toggle-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    .toggle-btn.duck-toggle.active {
-      background: var(--duck);
-      border-color: var(--duck);
-    }
   </style>
 </head>
 <body>
@@ -349,19 +323,19 @@
         <div class="panel-title">Lägg till Duckrace / Annat</div>
         <form id="duck-form" onsubmit="addOrder(event, 'duck')">
           <div class="form-group">
-            <label class="form-label">Användarnamn / Twitch</label>
-            <input type="text" class="form-input" id="duck-username" placeholder="t.ex. @DonTCG" required>
+            <label class="form-label">Vad det gäller / Event</label>
+            <input type="text" class="form-input" id="duck-event" placeholder="t.ex. Duckrace, Card Battle, Giveaway" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Vad de köpt / deltar i</label>
-            <input type="text" class="form-input" id="duck-product" placeholder="t.ex. Duckrace #5" required>
+            <label class="form-label">Deltagare / Vem</label>
+            <input type="text" class="form-input" id="duck-username" placeholder="t.ex. @DonTCG eller namn" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Antal / info (valfritt)</label>
-            <input type="text" class="form-input" id="duck-info" placeholder="t.ex. 3 ankor, nummer #12, #15, #18">
+            <label class="form-label">Info / Antal / Nummer</label>
+            <input type="text" class="form-input" id="duck-info" placeholder="t.ex. 3 ankor (#12, #15, #18)">
           </div>
           <div class="form-group">
-            <label class="form-label">Anteckningar / övrigt</label>
+            <label class="form-label">Anteckningar / Övrigt</label>
             <textarea class="form-textarea" id="duck-notes" placeholder="Valfri info..."></textarea>
           </div>
           <button type="submit" class="btn-duck-add">🦆 Lägg till</button>
@@ -375,7 +349,7 @@
           <button class="btn btn-secondary" onclick="quickAdd('Lost Origin Booster Box', 1199, 'manual')" style="text-align: left;">📦 Booster Box — 1 199 kr</button>
           <button class="btn btn-secondary" onclick="quickAdd('Brilliant Stars ETB', 449, 'manual')" style="text-align: left;">🎁 ETB — 449 kr</button>
           <button class="btn btn-secondary" onclick="quickAdd('Single Booster Pack', 45, 'manual')" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
-          <button class="btn btn-duck" onclick="quickAdd('Duckrace Entry', 50, 'duck')" style="text-align: left;">🦆 Duckrace — 50 kr</button>
+          <button class="btn btn-duck" onclick="quickAdd('Duckrace', 50, 'duck')" style="text-align: left;">🦆 Duckrace — 50 kr</button>
         </div>
       </div>
     </aside>
@@ -467,14 +441,15 @@
     function addOrder(e, type) {
       e.preventDefault();
       
-      let username, product, price, info, notes;
+      let eventName, username, product, price, info, notes;
       
       if (type === 'duck') {
+        eventName = document.getElementById('duck-event').value;
         username = document.getElementById('duck-username').value;
-        product = document.getElementById('duck-product').value;
         info = document.getElementById('duck-info').value;
         notes = document.getElementById('duck-notes').value;
-        price = 0; // Duckrace har ofta fast pris eller hanteras separat
+        price = 0;
+        product = eventName;
       } else {
         username = document.getElementById('input-username').value;
         product = document.getElementById('input-product').value;
@@ -495,7 +470,6 @@
       
       waitingQueue.push(order);
       
-      // Rensa formulär
       if (type === 'duck') {
         document.getElementById('duck-form').reset();
       } else {
@@ -506,19 +480,18 @@
     }
 
     function quickAdd(product, price, type) {
-      const username = prompt('Användarnamn:');
-      if (!username) return;
-      
-      const cleanUsername = username.startsWith('@') ? username : '@' + username;
-      
       if (type === 'duck') {
-        const info = prompt('Info (antal ankor, nummer, etc.):') || '';
+        const eventName = prompt('Vad det gäller / Event: (t.ex. Duckrace, Card Battle)') || 'Duckrace';
+        const username = prompt('Deltagare / Vem:') || '';
+        if (!username) return;
+        
+        const info = prompt('Info / Antal / Nummer:') || '';
         const notes = prompt('Anteckningar (valfritt):') || '';
         
         waitingQueue.push({
           id: Date.now(),
-          username: cleanUsername,
-          product: product,
+          username: username.startsWith('@') ? username : '@' + username,
+          product: eventName,
           price: price,
           type: 'duck',
           info: info,
@@ -527,9 +500,12 @@
           source: 'manual'
         });
       } else {
+        const username = prompt('Användarnamn / Twitch:');
+        if (!username) return;
+        
         waitingQueue.push({
           id: Date.now(),
-          username: cleanUsername,
+          username: username.startsWith('@') ? username : '@' + username,
           product: product,
           price: price,
           type: 'manual',
@@ -554,14 +530,12 @@
     function completeCurrent() {
       if (!currentOrder) return;
       
-      // Räkna bara Rip n Ship i omsättningen
       if (currentOrder.type !== 'duck') {
         revenue += currentOrder.price || 0;
       }
       completed++;
       currentOrder = null;
       
-      // Hämta nästa (oavsett typ)
       if (waitingQueue.length > 0) {
         currentOrder = waitingQueue.shift();
       }
