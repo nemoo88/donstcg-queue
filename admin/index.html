@@ -295,6 +295,24 @@
     </main>
 
     <script>
+                // 🔄 BroadcastChannel för real-time sync
+        let broadcastChannel = null;
+        try {
+            broadcastChannel = new BroadcastChannel('tcg_queue_channel');
+        } catch (e) {
+            console.warn('BroadcastChannel inte tillgängligt');
+        }
+        
+        function notifyOtherTabs() {
+            // Skicka meddelande via BroadcastChannel
+            if (broadcastChannel) {
+                broadcastChannel.postMessage({ type: 'queue-update', timestamp: Date.now() });
+            }
+            
+            // Trigga storage event manuellt (för backup)
+            localStorage.setItem('tcg_sync_trigger', Date.now().toString());
+        }
+
         let queue = JSON.parse(localStorage.getItem('tcg_queue')) || [];
         let completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
         let revenue = parseInt(localStorage.getItem('tcg_revenue')) || 0;
@@ -327,25 +345,27 @@
             
             const queueList = document.getElementById('queue-list');
             if (remaining === 0) {
-                queueList.innerHTML = '<div class=\"empty-state\"><p>Kön är tom.</p></div>';
+                queueList.innerHTML = '<div class="empty-state"><p>Kön är tom.</p></div>';
                 return;
             }
             
             queueList.innerHTML = queue.slice(1).map((order, index) => `
-                <div class=\"queue-item\">
-                    <div class=\"queue-position\">${index + 1}</div>
-                    <div class=\"queue-info\">
-                        <div class=\"queue-username\">${order.username}</div>
-                        <div class=\"queue-product\">${order.product}</div>
+                <div class="queue-item">
+                    <div class="queue-position">${index + 1}</div>
+                    <div class="queue-info">
+                        <div class="queue-username">${order.username}</div>
+                        <div class="queue-product">${order.product}</div>
                     </div>
-                    <span class=\"source-badge source-${order.source || 'manual'}\">${order.source === 'shopify' ? 'SHOPIFY' : order.source === 'demo' ? 'DEMO' : 'MANUELL'}</span>
-                    <button onclick=\"removeOrder(${index + 1})\" style=\"background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer;\">🗑</button>
+                    <span class="source-badge source-${order.source || 'manual'}">${order.source === 'shopify' ? 'SHOPIFY' : order.source === 'demo' ? 'DEMO' : 'MANUELL'}</span>
+                    <button onclick="removeOrder(${index + 1})" style="background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer;">🗑</button>
                 </div>
             `).join('');
             
             localStorage.setItem('tcg_queue', JSON.stringify(queue));
             localStorage.setItem('tcg_completed', completed);
             localStorage.setItem('tcg_revenue', revenue);
+            
+            notifyOtherTabs(); // 🔄 Meddela andra flikar
         }
 
         function addOrder(e) {
