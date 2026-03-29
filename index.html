@@ -20,6 +20,7 @@
       --border-hover: #333333;
       --live: #ef4444;
       --success: #22c55e;
+      --warning: #f59e0b;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -182,29 +183,46 @@
       background: var(--bg-hover);
       border-color: var(--border-hover);
     }
-    .setup-notice {
+    .demo-warning {
       margin-top: 60px;
       padding: 24px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
       border-radius: 16px;
-      color: var(--brand-primary);
+      color: var(--warning);
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
+      text-align: left;
     }
-    .setup-notice h3 {
+    .demo-warning h3 {
       margin-bottom: 12px;
       font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .setup-notice p {
+    .demo-warning p {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
     }
-    .setup-notice a {
-      color: var(--brand-primary);
-      text-decoration: underline;
+    .demo-warning ul {
+      list-style: none;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .demo-warning li {
+      margin-bottom: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+    .demo-warning li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--warning);
     }
     .footer {
       padding: 60px 24px;
@@ -282,14 +300,17 @@
         </a>
       </div>
 
-      <div class="setup-notice">
-        <h3>⚙️ Första gången?</h3>
-        <p>
-          Om detta är första gången du använder systemet, följ setup-guiden för att koppla din butik.
-        </p>
-        <p>
-          <a href="setup.html">Gå till Setup-guide →</a>
-        </p>
+      <div class="demo-warning">
+        <h3>⚠️ Detta är en demo-version</h3>
+        <p>Vad du ser här är en förhandsvisning av hur systemet fungerar. Alla "köp" sparas endast lokalt i din webbläsare och försvinner om du laddar om sidan.</p>
+        <p><strong>Fullversionen inkluderar:</strong></p>
+        <ul>
+          <li>Koppling till din riktiga Shopify-butik</li>
+          <li>Automatiska ordrar från köp</li>
+          <li>Permanent lagring av kön</li>
+          <li>Admin-panel för att styra allt</li>
+          <li>OBS-overlay för din stream</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -298,7 +319,6 @@
     <div class="footer-links">
       <a href="admin/" class="footer-link">Admin</a>
       <a href="overlay/" class="footer-link">Overlay</a>
-      <a href="setup.html" class="footer-link">Setup</a>
     </div>
     <p class="footer-copy">© 2026 DITT FÖRETAGSNAMN. Alla rättigheter förbehållna.</p>
   </footer>
