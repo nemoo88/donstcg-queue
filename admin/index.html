@@ -1,573 +1,274 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Don's TCG Queue</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg-primary: #050505;
-            --bg-secondary: #0a0a0a;
-            --bg-card: #111111;
-            --bg-hover: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --text-muted: #555555;
-            --border: #222222;
-            --border-hover: #333333;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --live: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --shopify: #95bf47;
-        }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-        .header {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo { 
-            font-size: 20px; 
-            font-weight: 800; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-        }
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-        }
-        @media (max-width: 1024px) { .main { grid-template-columns: 1fr; } }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-        
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        .stat-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
-        .stat-value { font-size: 32px; font-weight: 800; }
-        
-        .waiting-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .waiting-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .waiting-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-        .waiting-item:hover {
-            border-color: var(--accent);
-        }
-        .queue-position {
-            width: 36px;
-            height: 36px;
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid var(--accent);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--accent);
-        }
-        .queue-info { flex: 1; }
-        .queue-username { font-weight: 700; margin-bottom: 4px; font-size: 15px; }
-        .queue-product { font-size: 13px; color: var(--text-secondary); }
-        .source-badge {
-            font-size: 10px;
-            padding: 4px 10px;
-            border-radius: 100px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .source-shopify { background: var(--shopify); color: #000; }
-        .source-demo { background: var(--warning); color: #000; }
-        .source-manual { background: var(--text-secondary); color: #000; }
-        .source-website { background: var(--accent); color: #fff; }
-        
-        .btn-open {
-            padding: 10px 20px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-        .btn-open:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-        
-        .current-section {
-            background: var(--bg-card);
-            border: 2px solid var(--success);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        .current-section.inactive {
-            border-color: var(--border);
-            border-style: dashed;
-        }
-        .current-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 100px;
-            font-size: 13px;
-            color: var(--live);
-            font-weight: 700;
-        }
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--live);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .current-order {
-            background: var(--bg-primary);
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-        }
-        .current-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 600; }
-        .current-user { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
-        .current-product { font-size: 18px; color: var(--text-secondary); margin-bottom: 24px; }
-        
-        .btn {
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            margin-right: 8px;
-        }
-        .btn-success { 
-            background: var(--success); 
-            color: white; 
-            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
-        }
-        .btn-success:hover { 
-            background: #16a34a; 
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
-        }
-        .btn-secondary { 
-            background: var(--bg-secondary); 
-            color: var(--text-primary); 
-            border: 1px solid var(--border); 
-        }
-        .btn-secondary:hover { background: var(--bg-hover); }
-        
-        .sidebar { display: flex; flex-direction: column; gap: 24px; }
-        .panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-        }
-        .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 15px;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-        }
-        
-        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
-        
-        .sync-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Admin - Don's TCG (Demo)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-primary: #050505;
+      --bg-secondary: #0a0a0a;
+      --bg-card: #111111;
+      --text-primary: #ffffff;
+      --text-secondary: #888888;
+      --border: #222222;
+      --accent: #3b82f6;
+      --success: #22c55e;
+      --live: #ef4444;
+      --warning: #f59e0b;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-size: 20px; font-weight: 800; }
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+    @media (max-width: 1024px) { .main { grid-template-columns: 1fr; } }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .stat-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+    .stat-value { font-size: 32px; font-weight: 800; }
+    
+    .demo-banner {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      color: #fbbf24;
+      font-size: 14px;
+    }
+    
+    .current-section {
+      background: var(--bg-card);
+      border: 2px solid var(--success);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .current-section.inactive {
+      border-color: var(--border);
+      border-style: dashed;
+      opacity: 0.6;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .current-order {
+      background: var(--bg-primary);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+    .current-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .current-user { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .current-product { font-size: 18px; color: var(--text-secondary); margin-bottom: 24px; }
+    
+    .btn {
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      margin-right: 8px;
+    }
+    .btn-success { background: var(--success); color: white; }
+    .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
+    
+    .waiting-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .waiting-list { display: flex; flex-direction: column; gap: 12px; }
+    .waiting-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .queue-position {
+      width: 36px; height: 36px;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .queue-info { flex: 1; }
+    .queue-username { font-weight: 700; margin-bottom: 4px; }
+    .queue-product { font-size: 13px; color: var(--text-secondary); }
+    .btn-open {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); }
+    
+    .source-badge {
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .source-demo { background: var(--warning); color: #000; }
+    .source-manual { background: var(--text-secondary); color: #000; }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">🎴 Don's TCG Admin</div>
-        <div>
-            <a href="../" style="color: var(--text-secondary); text-decoration: none; margin-right: 16px;">Hemsida</a>
-            <a href="../overlay/queue.html" target="_blank" style="color: var(--text-secondary); text-decoration: none;">Overlay</a>
+  <header class="header">
+    <div class="logo">🎴 Don's TCG Admin (Demo)</div>
+    <div>
+      <a href="../" style="color: var(--text-secondary); text-decoration: none; margin-right: 16px;">Hemsida</a>
+      <a href="../overlay/" target="_blank" style="color: var(--text-secondary); text-decoration: none;">Overlay</a>
+    </div>
+  </header>
+
+  <div class="demo-banner">
+    ⚠️ <strong>Demo-läge:</strong> All data sparas endast i denna webbläsare och försvinner vid reload. 
+    I fullversionen kopplas detta till din Shopify-butik och all data sparas permanent.
+  </div>
+
+  <main class="main">
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Väntar</div>
+          <div class="stat-value" id="stat-waiting">0</div>
         </div>
-    </header>
-
-    <main class="main">
-        <div class="content">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Väntar</div>
-                    <div class="stat-value" id="stat-waiting">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Klara idag</div>
-                    <div class="stat-value" style="color: var(--success);" id="stat-completed">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Est. tid</div>
-                    <div class="stat-value" style="color: var(--warning);" id="stat-time">0 min</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Omsättning</div>
-                    <div class="stat-value" id="stat-revenue">0 kr</div>
-                </div>
-            </div>
-
-            <div class="current-section inactive" id="current-section">
-                <div class="current-header">
-                    <div class="live-indicator" id="live-indicator" style="display: none;">
-                        <span class="live-dot"></span>
-                        ÖPPNAS NU
-                    </div>
-                    <div id="current-status" style="color: var(--text-muted); font-size: 13px;">Ingen order öppnas</div>
-                </div>
-                <div class="current-order" id="current-order" style="display: none;">
-                    <div class="current-label">Nuvarande order</div>
-                    <div class="current-user" id="current-user">-</div>
-                    <div class="current-product" id="current-product">-</div>
-                    <div style="margin-top: 24px;">
-                        <button class="btn btn-success" onclick="completeCurrent()">✓ Klar - Nästa</button>
-                        <button class="btn btn-secondary" onclick="skipCurrent()">→ Skippa</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="waiting-section">
-                <div class="section-title">
-                    Kölista (väntar på att öppnas)
-                    <span style="font-size: 14px; color: var(--text-secondary);"><span id="waiting-count">0</span> ordrar</span>
-                </div>
-                <div class="waiting-list" id="waiting-list">
-                    <div class="empty-state">
-                        <p>Inga ordrar i kö. Lägg till manuellt eller vänta på köp från hemsidan.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-card">
+          <div class="stat-label">Klara idag</div>
+          <div class="stat-value" style="color: var(--success);" id="stat-completed">0</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-label">Est. tid</div>
+          <div class="stat-value" style="color: var(--warning);" id="stat-time">0 min</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Omsättning</div>
+          <div class="stat-value" id="stat-revenue">0 kr</div>
+        </div>
+      </div>
 
-        <aside class="sidebar">
-            <div class="panel">
-                <div class="panel-title">Lägg till order manuellt</div>
-                <form id="add-form" onsubmit="addOrder(event)">
-                    <div class="form-group">
-                        <label class="form-label">Användarnamn</label>
-                        <input type="text" class="form-input" id="input-username" placeholder="t.ex. @DonTCG" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Produkt</label>
-                        <input type="text" class="form-input" id="input-product" placeholder="t.ex. Lost Origin Booster Box" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pris (kr)</label>
-                        <input type="number" class="form-input" id="input-price" placeholder="0" min="0">
-                    </div>
-                    <button type="submit" class="btn-primary">+ Lägg till i kö</button>
-                </form>
-            </div>
+      <div class="current-section inactive" id="current-section">
+        <div class="section-title">
+          <span>Nuvarande order</span>
+          <span id="current-status" style="color: var(--text-secondary); font-size: 13px;">Ingen order öppnas</span>
+        </div>
+        <div class="current-order" id="current-order" style="display: none;">
+          <div class="current-label">Öppnar nu</div>
+          <div class="current-user" id="current-user">-</div>
+          <div class="current-product" id="current-product">-</div>
+          <div style="margin-top: 24px;">
+            <button class="btn btn-success" onclick="completeCurrent()">✓ Klar - Nästa</button>
+            <button class="btn btn-secondary" onclick="skipCurrent()">→ Skippa</button>
+          </div>
+        </div>
+      </div>
 
-            <div class="panel">
-                <div class="panel-title">Snabbval</div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button class="btn btn-secondary" onclick="quickAdd('Lost Origin Booster Box', 1199)" style="text-align: left;">📦 Booster Box — 1,199 kr</button>
-                    <button class="btn btn-secondary" onclick="quickAdd('Brilliant Stars ETB', 449)" style="text-align: left;">🎁 ETB — 449 kr</button>
-                    <button class="btn btn-secondary" onclick="quickAdd('Single Booster Pack', 45)" style="text-align: left;">🃏 Booster Pack — 45 kr</button>
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <div class="sync-indicator">
-        <span class="sync-dot"></span>
-        <span id="sync-text">Synkar...</span>
+      <div class="waiting-section">
+        <div class="section-title">
+          Kölista (väntar på att öppnas)
+          <span style="font-size: 14px; color: var(--text-secondary);"><span id="waiting-count">0</span> ordrar</span>
+        </div>
+        <div class="waiting-list" id="waiting-list">
+          <div class="empty-state">
+            <p>Inga ordrar i kö.</p>
+            <p style="font-size: 13px; margin-top: 8px;">Lägg till en test-order med formuläret till höger →</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        let broadcastChannel = null;
-        try {
-            broadcastChannel = new BroadcastChannel('tcg_queue_channel');
-        } catch (e) {
-            console.warn('BroadcastChannel inte tillgängligt');
-        }
-        
-        function notifyOtherTabs() {
-            if (broadcastChannel) {
-                broadcastChannel.postMessage({ type: 'queue-update', timestamp: Date.now() });
-            }
-            localStorage.setItem('tcg_sync_trigger', Date.now().toString());
-        }
-
-        let waitingQueue = JSON.parse(localStorage.getItem('tcg_waiting_queue')) || [];
-        let currentOrder = JSON.parse(localStorage.getItem('tcg_current_order')) || null;
-        let completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
-        let revenue = parseInt(localStorage.getItem('tcg_revenue')) || 0;
-
-        function saveAll() {
-            localStorage.setItem('tcg_waiting_queue', JSON.stringify(waitingQueue));
-            localStorage.setItem('tcg_current_order', JSON.stringify(currentOrder));
-            localStorage.setItem('tcg_completed', completed);
-            localStorage.setItem('tcg_revenue', revenue);
-            notifyOtherTabs();
-        }
-
-        function render() {
-            document.getElementById('stat-waiting').textContent = waitingQueue.length;
-            document.getElementById('stat-completed').textContent = completed;
-            document.getElementById('stat-time').textContent = (waitingQueue.length * 5) + ' min';
-            document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
-            
-            document.getElementById('waiting-count').textContent = waitingQueue.length;
-            const waitingList = document.getElementById('waiting-list');
-            
-            if (waitingQueue.length === 0) {
-                waitingList.innerHTML = '<div class="empty-state"><p>Inga ordrar i kö.</p></div>';
-            } else {
-                waitingList.innerHTML = waitingQueue.map((order, index) => `
-                    <div class="waiting-item">
-                        <div class="queue-position">${index + 1}</div>
-                        <div class="queue-info">
-                            <div class="queue-username">${order.username}</div>
-                            <div class="queue-product">${order.product}</div>
-                        </div>
-                        <span class="source-badge source-${order.source || 'manual'}">${order.source === 'shopify' ? 'SHOPIFY' : order.source === 'demo' ? 'DEMO' : order.source === 'website' ? 'WEBB' : 'MANUELL'}</span>
-                        <button class="btn-open" onclick="openOrder(${index})">ÖPPNA</button>
-                        <button onclick="removeWaiting(${index})" style="background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 10px 14px; border-radius: 8px; cursor: pointer; margin-left: 8px;">🗑</button>
-                    </div>
-                `).join('');
-            }
-            
-            const currentSection = document.getElementById('current-section');
-            const liveIndicator = document.getElementById('live-indicator');
-            const currentStatus = document.getElementById('current-status');
-            const currentOrderDiv = document.getElementById('current-order');
-            
-            if (currentOrder) {
-                currentSection.classList.remove('inactive');
-                currentSection.style.borderColor = 'var(--success)';
-                liveIndicator.style.display = 'flex';
-                currentStatus.style.display = 'none';
-                currentOrderDiv.style.display = 'block';
-                document.getElementById('current-user').textContent = currentOrder.username;
-                document.getElementById('current-product').textContent = currentOrder.product;
-            } else {
-                currentSection.classList.add('inactive');
-                currentSection.style.borderColor = 'var(--border)';
-                liveIndicator.style.display = 'none';
-                currentStatus.style.display = 'block';
-                currentOrderDiv.style.display = 'none';
-            }
-            
-            saveAll();
-        }
-
-        function openOrder(index) {
-            if (currentOrder) {
-                alert('Du har redan en order som öppnas! Markera den som klar först.');
-                return;
-            }
-            
-            currentOrder = waitingQueue.splice(index, 1)[0];
-            render();
-        }
-
-        function completeCurrent() {
-            if (!currentOrder) return;
-            
-            revenue += currentOrder.price || 0;
-            completed++;
-            currentOrder = null;
-            
-            if (waitingQueue.length > 0) {
-                currentOrder = waitingQueue.shift();
-            }
-            
-            render();
-        }
-
-        function skipCurrent() {
-            if (!currentOrder) return;
-            
-            waitingQueue.push(currentOrder);
-            currentOrder = null;
-            
-            if (waitingQueue.length > 0) {
-                currentOrder = waitingQueue.shift();
-            }
-            
-            render();
-        }
-
-        function removeWaiting(index) {
-            if (confirm('Ta bort denna order?')) {
-                waitingQueue.splice(index, 1);
-                render();
-            }
-        }
-
-        function addOrder(e) {
-            e.preventDefault();
-            waitingQueue.push({
-                id: Date.now(),
-                username: document.getElementById('input-username').value,
-                product: document.getElementById('input-product').value,
-                price: parseInt(document.getElementById('input-price').value) || 0,
-                timestamp: Date.now(),
-                source: 'manual'
-            });
-            document.getElementById('add-form').reset();
-            render();
-        }
-
-        function quickAdd(product, price) {
-            const username = prompt('Användarnamn:');
-            if (username) {
-                waitingQueue.push({
-                    id: Date.now(),
-                    username: username.startsWith('@') ? username : '@' + username,
-                    product: product,
-                    price: price,
-                    timestamp: Date.now(),
-                    source: 'manual'
-                });
-                render();
-            }
-        }
-
-        if (broadcastChannel) {
-            broadcastChannel.onmessage = (event) => {
-                if (event.data.type === 'queue-update') {
-                    waitingQueue = JSON.parse(localStorage.getItem('tcg_waiting_queue')) || [];
-                    currentOrder = JSON.parse(localStorage.getItem('tcg_current_order')) || null;
-                    completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
-                    revenue = parseInt(localStorage.getItem('tcg_revenue')) || 0;
-                    render();
-                }
-            };
-        }
-
-        setInterval(() => {
-            const newWaiting = JSON.parse(localStorage.getItem('tcg_waiting_queue')) || [];
-            const newCurrent = JSON.parse(localStorage.getItem('tcg_current_order')) || null;
-            
-            if (JSON.stringify(newWaiting) !== JSON.stringify(waitingQueue) ||
-                JSON.stringify(newCurrent) !== JSON.stringify(currentOrder)) {
-                waitingQueue = newWaiting;
-                currentOrder = newCurrent;
-                completed = parseInt(localStorage.getItem('tcg_completed')) || 0;
-                revenue = parseInt(localStorage.getItem('tcg_revenue')) || 0;
-                render();
-            }
-        }, 2000);
-
-        render();
-        document.getElementById('sync-text').textContent = 'Synkad';
-    </script>
-</body>
-</html>
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Lägg till order (Demo)</div>
+        <form id="add-form" onsubmit="addOrder(event)">
+          <div class="form-group">
+            <label class="form-label">Användarnamn / Twitch</label>
+            <input type="text" class="form-input" id="input-username" placeholder="t.ex. @DonTCG" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Produkt</label>
+            <input type="text" class="form-input" id="input
