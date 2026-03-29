@@ -7,9 +7,9 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-primary: rgba(10, 10, 10, 0.98);
-            --bg-card: rgba(20, 20, 20, 0.99);
-            --border: rgba(255, 255, 255, 0.08);
+            --bg-primary: rgba(5, 5, 5, 0.98);
+            --bg-card: rgba(17, 17, 17, 0.99);
+            --border: rgba(255, 255, 255, 0.06);
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.5);
             --accent: #3b82f6;
@@ -18,7 +18,7 @@
             --waiting: #f59e0b;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: transparent;
             color: var(--text-primary);
             overflow: hidden;
@@ -30,19 +30,20 @@
             top: 20px;
             right: 20px;
             width: 320px;
-            max-height: 500px;
+            max-height: 480px;
             background: var(--bg-primary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(20px);
         }
         
         .overlay-header {
             background: var(--bg-card);
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -52,81 +53,85 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .logo-icon {
-            width: 24px;
-            height: 24px;
-            background: var(--accent);
-            border-radius: 5px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
         }
-        .brand { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+        .brand { font-weight: 800; font-size: 14px; letter-spacing: 0.5px; }
         .live-badge {
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
+            gap: 5px;
+            padding: 5px 10px;
             background: rgba(239, 68, 68, 0.15);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 100px;
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--live);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .live-dot {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: var(--live);
             border-radius: 50%;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
         
         .current-section {
-            padding: 14px 16px;
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+            padding: 18px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
         .current-section.inactive {
             background: transparent;
-            opacity: 0.7;
+            opacity: 0.6;
         }
         .section-label {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
         .current-user {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 2px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
         }
         .current-product {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
+            gap: 6px;
+            padding: 6px 12px;
             border-radius: 100px;
-            font-size: 9px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .status-live {
             background: rgba(34, 197, 94, 0.15);
@@ -145,7 +150,7 @@
             max-height: 280px;
         }
         .queue-header {
-            padding: 10px 16px 8px;
+            padding: 14px 18px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -156,45 +161,48 @@
             z-index: 10;
         }
         .queue-title {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        .queue-count {
-            font-size: 10px;
-            color: var(--text-primary);
+            letter-spacing: 1.5px;
             font-weight: 700;
         }
+        .queue-count {
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 800;
+            background: rgba(59, 130, 246, 0.2);
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
         .queue-list {
-            padding: 6px;
+            padding: 8px;
         }
         .queue-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            margin-bottom: 4px;
+            gap: 12px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             transition: all 0.2s;
         }
         .queue-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
         }
         .queue-position {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             background: rgba(59, 130, 246, 0.2);
             border: 1px solid var(--accent);
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
             color: var(--accent);
             flex-shrink: 0;
@@ -204,41 +212,41 @@
             min-width: 0;
         }
         .queue-username {
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.2;
         }
         .queue-product {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.2;
+            font-weight: 500;
         }
         
         .stats-footer {
-            padding: 10px 16px;
+            padding: 14px 18px;
             background: var(--bg-card);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-secondary);
             flex-shrink: 0;
+            font-weight: 500;
         }
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         .stat-value {
             color: var(--text-primary);
-            font-weight: 700;
+            font-weight: 800;
         }
         
         .queue-section::-webkit-scrollbar {
@@ -256,14 +264,16 @@
             text-align: center;
             padding: 30px 20px;
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 500;
         }
         .sync-status {
             position: fixed;
-            bottom: 8px;
-            right: 8px;
+            bottom: 10px;
+            right: 10px;
             font-size: 9px;
             color: rgba(255,255,255,0.2);
+            font-weight: 500;
         }
     </style>
 </head>
@@ -290,7 +300,7 @@
         <div class="queue-section">
             <div class="queue-header">
                 <span class="queue-title">Nästa i kö</span>
-                <span class="queue-count"><span id="queue-count">0</span></span>
+                <span class="queue-count" id="queue-count">0</span>
             </div>
             <div class="queue-list" id="queue-list">
                 <div class="empty-state">Ingen kö just nu</div>
