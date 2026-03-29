@@ -65,8 +65,8 @@
   <header class="header">
     <div class="logo"><span class="logo-icon">🎴</span><span>TCG Queue Admin</span></div>
     <nav class="nav-links">
-      <a href="/" class="nav-link">Hemsida</a>
-      <a href="/overlay/" target="_blank" class="nav-link">Overlay</a>
+      <a href="../index.html" class="nav-link">Hemsida</a>
+      <a href="../overlay/index.html" target="_blank" class="nav-link">Overlay</a>
       <span class="status-badge">● LIVE</span>
     </nav>
   </header>
@@ -159,7 +159,7 @@
       }
       ql.innerHTML = html;
       var btns = ql.querySelectorAll('.btn-primary');
-      for (var j=0; j<btns.length; j++) btns[j].addEventListener('click', function(e){openOrder(e.target.getAttribute('data-oid'));});
+      for (var j=0; j<btns.length; j++) btns[j].addEventListener('click', function(e){openOrder(e.target.getAttribute('data-oid')); });
     }
     
     function renderQuickItems() {
@@ -172,9 +172,9 @@
       }
       c.innerHTML = html;
       var its = c.querySelectorAll('.quick-item');
-      for (var j=0; j<its.length; j++) its[j].addEventListener('click', function(e){if(e.target.classList.contains('quick-delete'))return;useQuickItem(e.currentTarget.getAttribute('data-qid'));});
+      for (var j=0; j<its.length; j++) its[j].addEventListener('click', function(e){if(e.target.classList.contains('quick-delete'))return;useQuickItem(e.currentTarget.getAttribute('data-qid')); });
       var dels = c.querySelectorAll('.quick-delete');
-      for (var k=0; k<dels.length; k++) dels[k].addEventListener('click', function(e){e.stopPropagation();deleteQuickItem(e.target.getAttribute('data-did'));});
+      for (var k=0; k<dels.length; k++) dels[k].addEventListener('click', function(e){e.stopPropagation(); deleteQuickItem(e.target.getAttribute('data-did')); });
     }
     
     function addOrder(type) {
@@ -223,8 +223,8 @@
     function toggleForm() { document.getElementById('ripship-panel').classList.toggle('hidden'); document.getElementById('event-panel').classList.toggle('hidden'); }
     function save() { localStorage.setItem('tcg_queue',JSON.stringify(queue)); localStorage.setItem('tcg_current',JSON.stringify(currentOrder)); localStorage.setItem('tcg_completed',completed); localStorage.setItem('tcg_revenue',revenue); }
     
-    document.getElementById('btn-add-ripship').addEventListener('click',function(){addOrder('ripship');});
-    document.getElementById('btn-add-event').addEventListener('click',function(){addOrder('event');});
+    document.getElementById('btn-add-ripship').addEventListener('click',function(){addOrder('ripship'); });
+    document.getElementById('btn-add-event').addEventListener('click',function(){addOrder('event'); });
     document.getElementById('btn-toggle-event').addEventListener('click',toggleForm);
     document.getElementById('btn-toggle-ripship').addEventListener('click',toggleForm);
     document.getElementById('btn-complete').addEventListener('click',completeCurrent);
