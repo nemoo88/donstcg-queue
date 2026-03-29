@@ -1,4 +1,3 @@
-
 # 🎴 TCG Queue System
 
 **Live Rip n Ship Queue System för TCG-streamers**
@@ -10,7 +9,7 @@
 
 ## 🚀 Demo
 
-Testa systemet live: **[GitHub Pages Demo](https://nemoo88.github.io/tcg-queue-demo/)**
+Testa systemet live: **[GitHub Pages Demo](https://ditt-användarnamn.github.io/tcg-queue-demo/)**
 
 ### Vad ingår i demon:
 
@@ -47,10 +46,11 @@ Kontakta för:
 - **Custom anpassning**
 - **Support & installation**
 
-**Kontakt:** <!-- Direktmeddelande till dig -->
-<a href="https://discord.com/users/164845871278718978" target="_blank">
-  📩 Skicka DM på Discord
-</a>
+### 📞 Kontakt
+
+| Plattform | Länk/Info |
+|-----------|-----------|
+| **Discord** | 💬 [Skicka DM](https://discord.com/users/164845871278718978) eller lägg till: `nemoo88` |
 
 ---
 
