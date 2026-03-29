@@ -2,13 +2,13 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>OBS Overlay - Don's TCG (Demo)</title>
+  <title>OBS Overlay - Don's TCG</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg-primary: rgba(5, 5, 5, 0.98);
-      --bg-card: rgba(17, 17, 17, 0.99);
-      --border: rgba(255, 255, 255, 0.06);
+      --bg-primary: rgba(5, 5, 5, 0.95);
+      --bg-card: rgba(17, 17, 17, 0.98);
+      --border: rgba(255, 255, 255, 0.08);
       --text-primary: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.5);
       --accent: #3b82f6;
@@ -28,41 +28,60 @@
       position: absolute;
       top: 20px;
       right: 20px;
-      width: 280px;
+      width: 260px;
       background: var(--bg-primary);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: visible;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+      border-radius: 12px; /* KONSISTENT: Alla hörn rundade */
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       backdrop-filter: blur(20px);
     }
+    
+    /* Header */
     .overlay-header {
       background: var(--bg-card);
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .brand { font-weight: 800; font-size: 13px; letter-spacing: 0.5px; }
+    .brand { 
+      font-weight: 800; 
+      font-size: 12px; 
+      letter-spacing: 0.5px; 
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-icon {
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: 4px; /* KONSISTENT: Liten rundning */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
     .live-badge {
       display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
+      gap: 4px;
+      padding: 4px 8px;
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 100px;
+      border-radius: 20px; /* KONSISTENT: Pill-form */
       font-size: 9px;
       font-weight: 800;
       color: var(--live);
       text-transform: uppercase;
     }
     .live-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       background: var(--live);
       border-radius: 50%;
       animation: pulse 1.5s infinite;
@@ -71,14 +90,19 @@
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(0.8); }
     }
+    
+    /* Current Section - SMALARE */
     .current-section {
-      padding: 14px 16px;
-      background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, transparent 100%);
+      padding: 12px 14px;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.06) 0%, transparent 100%);
       border-bottom: 1px solid var(--border);
     }
-    .current-section.inactive { background: transparent; opacity: 0.6; }
+    .current-section.inactive { 
+      background: transparent; 
+      opacity: 0.6; 
+    }
     .current-section.duck {
-      background: linear-gradient(180deg, rgba(255, 107, 157, 0.08) 0%, transparent 100%);
+      background: linear-gradient(180deg, rgba(255, 107, 157, 0.06) 0%, transparent 100%);
     }
     .section-label {
       font-size: 9px;
@@ -88,82 +112,95 @@
       margin-bottom: 6px;
       font-weight: 700;
     }
-    .current-main {
-      font-size: 16px;
-      font-weight: 800;
+    .current-user { 
+      font-size: 15px; 
+      font-weight: 800; 
       margin-bottom: 2px;
-      line-height: 1.2;
+      letter-spacing: -0.3px;
     }
-    .current-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-      line-height: 1.2;
-    }
-    .current-info {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-style: italic;
-      margin-top: 4px;
-      line-height: 1.2;
+    .current-product { 
+      font-size: 11px; 
+      color: var(--text-secondary); 
+      margin-bottom: 6px;
     }
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 100px;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 20px; /* KONSISTENT: Pill-form */
       font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
-      margin-top: 6px;
     }
-    .status-live { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.3); }
-    .status-waiting { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .status-duck { background: rgba(255, 107, 157, 0.15); color: var(--duck); border: 1px solid rgba(255, 107, 157, 0.3); }
+    .status-live { 
+      background: rgba(34, 197, 94, 0.15); 
+      color: var(--success); 
+      border: 1px solid rgba(34, 197, 94, 0.3); 
+    }
+    .status-waiting { 
+      background: rgba(245, 158, 11, 0.15); 
+      color: #f59e0b; 
+      border: 1px solid rgba(245, 158, 11, 0.3); 
+    }
+    .status-duck {
+      background: rgba(255, 107, 157, 0.15);
+      color: var(--duck);
+      border: 1px solid rgba(255, 107, 157, 0.3);
+    }
     
+    /* Queue Section */
     .queue-section { 
       flex: 1; 
-      overflow: visible;
     }
     .queue-header {
-      padding: 10px 16px 6px;
+      padding: 10px 14px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border);
       background: var(--bg-card);
     }
-    .queue-title { font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+    .queue-title { 
+      font-size: 9px; 
+      color: var(--text-secondary); 
+      text-transform: uppercase; 
+      letter-spacing: 1.5px; 
+      font-weight: 700; 
+    }
     .queue-count {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-primary);
       font-weight: 800;
       background: rgba(59, 130, 246, 0.2);
-      padding: 2px 8px;
-      border-radius: 100px;
+      padding: 2px 6px;
+      border-radius: 10px; /* KONSISTENT: Rundad */
     }
-    .queue-list { padding: 6px; }
+    .queue-list { 
+      padding: 6px; 
+    }
+    
+    /* Queue Items - SMALARE & KONSISTENT */
     .queue-item {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 8px;
-      padding: 8px 12px;
-      margin-bottom: 4px;
+      padding: 6px 10px; /* SMALARE padding */
+      margin-bottom: 3px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 8px; /* KONSISTENT: Samma som container */
     }
     .queue-item.duck {
-      border-color: var(--duck);
+      border-color: rgba(255, 107, 157, 0.3);
       background: rgba(255, 107, 157, 0.05);
     }
     .queue-position {
-      width: 22px;
-      height: 22px;
+      width: 22px; /* MINDRE */
+      height: 22px; /* MINDRE */
       background: rgba(59, 130, 246, 0.2);
       border: 1px solid var(--accent);
-      border-radius: 6px;
+      border-radius: 6px; /* KONSISTENT: Samma som .queue-item */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -171,62 +208,68 @@
       font-weight: 800;
       color: var(--accent);
       flex-shrink: 0;
-      margin-top: 2px;
     }
     .queue-position.duck {
       background: rgba(255, 107, 157, 0.2);
       border-color: var(--duck);
       color: var(--duck);
     }
-    .queue-info { flex: 1; min-width: 0; }
-    .queue-main { 
-      font-size: 13px;
+    .queue-info { 
+      flex: 1; 
+      min-width: 0;
+    }
+    .queue-username { 
+      font-size: 12px; /* MINDRE */
       font-weight: 700; 
-      line-height: 1.3;
-      margin-bottom: 1px;
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+      line-height: 1.2;
     }
-    .queue-sub { 
-      font-size: 11px;
+    .queue-product { 
+      font-size: 10px; /* MINDRE */
       color: var(--text-secondary); 
-      line-height: 1.3;
-    }
-    .queue-detail {
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-style: italic;
-      line-height: 1.3;
-      margin-top: 2px;
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+      line-height: 1.2;
     }
     
+    /* Footer */
     .stats-footer {
-      padding: 10px 16px;
+      padding: 10px 14px;
       background: var(--bg-card);
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-secondary);
     }
-    .stat-item { display: flex; align-items: center; gap: 6px; }
+    .stat-item { display: flex; align-items: center; gap: 5px; }
     .stat-value { color: var(--text-primary); font-weight: 800; }
     
-    .empty-state { text-align: center; padding: 16px; color: var(--text-secondary); font-size: 12px; }
+    .empty-state { 
+      text-align: center; 
+      padding: 16px 14px; 
+      color: var(--text-secondary); 
+      font-size: 11px; 
+    }
     .demo-notice {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
+      bottom: 8px;
+      right: 8px;
       font-size: 8px;
-      color: rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.5);
-      padding: 4px 8px;
-      border-radius: 4px;
+      color: rgba(255,255,255,0.15);
     }
   </style>
 </head>
 <body>
   <div class="overlay-container">
     <div class="overlay-header">
-      <div class="brand">🎴 DON'S TCG</div>
+      <div class="brand">
+        <div class="brand-icon">🎴</div>
+        DON'S TCG
+      </div>
       <div class="live-badge">
         <span class="live-dot"></span>
         LIVE
@@ -235,9 +278,8 @@
     
     <div class="current-section" id="current-section">
       <div class="section-label">Nu öppnas</div>
-      <div class="current-main" id="current-main">@väntar...</div>
-      <div class="current-sub" id="current-sub">Ingen order</div>
-      <div class="current-info" id="current-info"></div>
+      <div class="current-user" id="current-user">@väntar...</div>
+      <div class="current-product" id="current-product">Ingen order öppnas just nu</div>
       <span class="status-badge status-waiting" id="status-badge">Väntar</span>
     </div>
     
@@ -263,7 +305,7 @@
     </div>
   </div>
   
-  <div class="demo-notice">DEMO</div>
+  <div class="demo-notice">demo</div>
 
   <script>
     let waitingQueue = [];
@@ -283,77 +325,63 @@
 
     function render() {
       const currentSection = document.getElementById('current-section');
-      const currentMain = document.getElementById('current-main');
-      const currentSub = document.getElementById('current-sub');
-      const currentInfo = document.getElementById('current-info');
+      const currentUser = document.getElementById('current-user');
+      const currentProduct = document.getElementById('current-product');
       const statusBadge = document.getElementById('status-badge');
       
       if (currentOrder) {
         currentSection.classList.remove('inactive');
+        currentSection.classList.toggle('duck', currentOrder.type === 'duck');
+        currentUser.textContent = currentOrder.username || '@okänd';
+        currentProduct.textContent = currentOrder.product || '-';
         
-        // 🦆 Kolla om det är manuell duckrace
-        if (currentOrder.type === 'duck' && currentOrder.manualDuck) {
-          currentSection.classList.add('duck');
-          currentSection.style.borderColor = 'var(--duck)';
+        if (currentOrder.type === 'duck') {
           statusBadge.textContent = '🦆 DUCKRACE';
           statusBadge.className = 'status-badge status-duck';
-          
-          // Visa Event-namnet stort, vem som deltar under, info sist
-          currentMain.textContent = currentOrder.product || 'Duckrace';
-          currentSub.textContent = currentOrder.username || '@alla';
-          currentInfo.textContent = currentOrder.info || '';
         } else {
-          currentSection.classList.remove('duck');
-          currentSection.style.borderColor = 'var(--success)';
           statusBadge.textContent = 'LIVE NU';
           statusBadge.className = 'status-badge status-live';
-          
-          // Normal Rip n Ship
-          currentMain.textContent = currentOrder.username || '@okänd';
-          currentSub.textContent = currentOrder.product || '-';
-          currentInfo.textContent = '';
         }
       } else {
-        currentSection.classList.remove('duck');
         currentSection.classList.add('inactive');
-        currentSection.style.borderColor = 'var(--border)';
-        currentMain.textContent = '@väntar...';
-        currentSub.textContent = 'Ingen order öppnas just nu';
-        currentInfo.textContent = '';
+        currentSection.classList.remove('duck');
+        currentUser.textContent = '@väntar...';
+        currentProduct.textContent = 'Ingen order öppnas just nu';
         statusBadge.textContent = 'Väntar';
         statusBadge.className = 'status-badge status-waiting';
       }
       
-      // 🦆 Filtrera: visa allt UTOM automatiska Shopify-duckrace
-      const visibleQueue = waitingQueue.filter(order => {
-        if (order.type === 'duck' && !order.manualDuck) {
-          return false; // Filtrera bort automatiska Shopify-duckrace
-        }
-        return true; // Visa allt annat (inklusive manualDuck)
-      });
-      
-      document.getElementById('queue-count').textContent = visibleQueue.length;
+      document.getElementById('queue-count').textContent = waitingQueue.length;
       const queueList = document.getElementById('queue-list');
       
-      if (visibleQueue.length === 0) {
+      if (waitingQueue.length === 0) {
         queueList.innerHTML = '<div class="empty-state">Ingen kö just nu</div>';
       } else {
-        queueList.innerHTML = visibleQueue.slice(0, 5).map((order, index) => {
-          const isDuck = order.type === 'duck' && order.manualDuck;
-          return `
-            <div class="queue-item ${isDuck ? 'duck' : ''}">
-              <div class="queue-position ${isDuck ? 'duck' : ''}">${index + 1}</div>
+        // Visa ALLA i kön (inklusive manuella duckrace)
+        // Filtrera bara bort automatiska shopify-duckrace (har type='duck' men INTE manualDuck)
+        const displayQueue = waitingQueue.filter(order => {
+          // Visa om: inte duck, ELLER manuellt tillagd duck
+          return order.type !== 'duck' || order.manualDuck === true;
+        });
+        
+        if (displayQueue.length === 0) {
+          queueList.innerHTML = '<div class="empty-state">Endast auto-ordrar</div>';
+        } else {
+          queueList.innerHTML = displayQueue.slice(0, 4).map((order, index) => `
+            <div class="queue-item ${order.type === 'duck' ? 'duck' : ''}">
+              <div class="queue-position ${order.type === 'duck' ? 'duck' : ''}">${index + 1}</div>
               <div class="queue-info">
-                <div class="queue-main">${isDuck ? order.product : order.username}</div>
-                <div class="queue-sub">${isDuck ? order.username : order.product}</div>
-                ${order.info ? `<div class="queue-detail">${order.info}</div>` : ''}
+                <div class="queue-username">${order.username || '@alla'}</div>
+                <div class="queue-product">${order.product}</div>
               </div>
             </div>
-          `;
-        }).join('');
+          `).join('');
+        }
       }
       
-      document.getElementById('est-time').textContent = (visibleQueue.length * 5) + ' min';
+      // Beräkna est. tid (bara Rip n Ship, inte duckrace)
+      const ripShipCount = waitingQueue.filter(o => o.type !== 'duck').length;
+      document.getElementById('est-time').textContent = (ripShipCount * 5) + ' min';
       document.getElementById('completed-count').textContent = completed;
     }
 
