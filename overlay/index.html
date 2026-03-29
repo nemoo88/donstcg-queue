@@ -13,7 +13,6 @@
       --text-secondary: rgba(255, 255, 255, 0.5);
       --accent: #3b82f6;
       --live: #ef4444;
-      --success: #22c55e;
       --duck: #ff6b9d;
     }
     body {
@@ -31,7 +30,7 @@
       width: 260px;
       background: var(--bg-primary);
       border: 1px solid var(--border);
-      border-radius: 12px; /* KONSISTENT: Alla hörn rundade */
+      border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
       display: flex;
@@ -60,7 +59,7 @@
       width: 16px;
       height: 16px;
       background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: 4px; /* KONSISTENT: Liten rundning */
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -73,7 +72,7 @@
       padding: 4px 8px;
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 20px; /* KONSISTENT: Pill-form */
+      border-radius: 20px;
       font-size: 9px;
       font-weight: 800;
       color: var(--live);
@@ -91,7 +90,7 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
     
-    /* Current Section - SMALARE */
+    /* Current Section - UTAN STATUS BADGE */
     .current-section {
       padding: 12px 14px;
       background: linear-gradient(180deg, rgba(59, 130, 246, 0.06) 0%, transparent 100%);
@@ -121,33 +120,8 @@
     .current-product { 
       font-size: 11px; 
       color: var(--text-secondary); 
-      margin-bottom: 6px;
     }
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 8px;
-      border-radius: 20px; /* KONSISTENT: Pill-form */
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-    .status-live { 
-      background: rgba(34, 197, 94, 0.15); 
-      color: var(--success); 
-      border: 1px solid rgba(34, 197, 94, 0.3); 
-    }
-    .status-waiting { 
-      background: rgba(245, 158, 11, 0.15); 
-      color: #f59e0b; 
-      border: 1px solid rgba(245, 158, 11, 0.3); 
-    }
-    .status-duck {
-      background: rgba(255, 107, 157, 0.15);
-      color: var(--duck);
-      border: 1px solid rgba(255, 107, 157, 0.3);
-    }
+    /* Status-badge BORTTAGEN */
     
     /* Queue Section */
     .queue-section { 
@@ -174,33 +148,33 @@
       font-weight: 800;
       background: rgba(59, 130, 246, 0.2);
       padding: 2px 6px;
-      border-radius: 10px; /* KONSISTENT: Rundad */
+      border-radius: 10px;
     }
     .queue-list { 
       padding: 6px; 
     }
     
-    /* Queue Items - SMALARE & KONSISTENT */
+    /* Queue Items */
     .queue-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 10px; /* SMALARE padding */
+      padding: 6px 10px;
       margin-bottom: 3px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
-      border-radius: 8px; /* KONSISTENT: Samma som container */
+      border-radius: 8px;
     }
     .queue-item.duck {
       border-color: rgba(255, 107, 157, 0.3);
       background: rgba(255, 107, 157, 0.05);
     }
     .queue-position {
-      width: 22px; /* MINDRE */
-      height: 22px; /* MINDRE */
+      width: 22px;
+      height: 22px;
       background: rgba(59, 130, 246, 0.2);
       border: 1px solid var(--accent);
-      border-radius: 6px; /* KONSISTENT: Samma som .queue-item */
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -219,7 +193,7 @@
       min-width: 0;
     }
     .queue-username { 
-      font-size: 12px; /* MINDRE */
+      font-size: 12px;
       font-weight: 700; 
       white-space: nowrap; 
       overflow: hidden; 
@@ -227,7 +201,7 @@
       line-height: 1.2;
     }
     .queue-product { 
-      font-size: 10px; /* MINDRE */
+      font-size: 10px;
       color: var(--text-secondary); 
       white-space: nowrap; 
       overflow: hidden; 
@@ -276,11 +250,12 @@
       </div>
     </div>
     
+    <!-- Nuvarande order - UTAN status badge -->
     <div class="current-section" id="current-section">
       <div class="section-label">Nu öppnas</div>
       <div class="current-user" id="current-user">@väntar...</div>
       <div class="current-product" id="current-product">Ingen order öppnas just nu</div>
-      <span class="status-badge status-waiting" id="status-badge">Väntar</span>
+      <!-- Ingen status-badge här längre -->
     </div>
     
     <div class="queue-section">
@@ -327,28 +302,23 @@
       const currentSection = document.getElementById('current-section');
       const currentUser = document.getElementById('current-user');
       const currentProduct = document.getElementById('current-product');
-      const statusBadge = document.getElementById('status-badge');
       
       if (currentOrder) {
         currentSection.classList.remove('inactive');
-        currentSection.classList.toggle('duck', currentOrder.type === 'duck');
+        // Sätt duck-klass om det är duckrace
+        if (currentOrder.type === 'duck') {
+          currentSection.classList.add('duck');
+        } else {
+          currentSection.classList.remove('duck');
+        }
         currentUser.textContent = currentOrder.username || '@okänd';
         currentProduct.textContent = currentOrder.product || '-';
-        
-        if (currentOrder.type === 'duck') {
-          statusBadge.textContent = '🦆 DUCKRACE';
-          statusBadge.className = 'status-badge status-duck';
-        } else {
-          statusBadge.textContent = 'LIVE NU';
-          statusBadge.className = 'status-badge status-live';
-        }
+        // Ingen status-badge uppdatering behövs längre
       } else {
         currentSection.classList.add('inactive');
         currentSection.classList.remove('duck');
         currentUser.textContent = '@väntar...';
         currentProduct.textContent = 'Ingen order öppnas just nu';
-        statusBadge.textContent = 'Väntar';
-        statusBadge.className = 'status-badge status-waiting';
       }
       
       document.getElementById('queue-count').textContent = waitingQueue.length;
@@ -358,9 +328,7 @@
         queueList.innerHTML = '<div class="empty-state">Ingen kö just nu</div>';
       } else {
         // Visa ALLA i kön (inklusive manuella duckrace)
-        // Filtrera bara bort automatiska shopify-duckrace (har type='duck' men INTE manualDuck)
         const displayQueue = waitingQueue.filter(order => {
-          // Visa om: inte duck, ELLER manuellt tillagd duck
           return order.type !== 'duck' || order.manualDuck === true;
         });
         
