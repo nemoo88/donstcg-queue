@@ -4,7 +4,7 @@ A demo version of the TCG Live Rip n Ship Queue System for GitHub Pages.
 
 ## 🚀 Live Demo
 
-Visit: [`https://nemooo88.github.io/tcg-queue-demo/`](https://nemooo88.github.io/tcg-queue-demo/)
+Visit: [`https://nemoo88.github.io/tcg-queue-demo/`](https://nemoo88.github.io/tcg-queue-demo/)
 
 ## ✨ Demo Features
 
