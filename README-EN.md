@@ -4,19 +4,7 @@ A demo version of the TCG Live Rip n Ship Queue System for GitHub Pages.
 
 ## 🚀 Live Demo
 
-Visit: `https://your-username.github.io/tcg-queue-demo/`
-
-## 📁 Files
-
-This repo contains only **3 files** (protects the code):
-
-```
-├── index.html          # Homepage/landing page
-├── admin/
-│   └── index.html      # Admin panel (all functionality)
-└── overlay/
-    └── index.html      # OBS Overlay
-```
+[Visit: `https://your-username.github.io/tcg-queue-demo/`](https://nemooo88.github.io/tcg-queue-demo/)
 
 ## ✨ Demo Features
 
