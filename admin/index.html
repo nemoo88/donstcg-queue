@@ -316,7 +316,9 @@
     }
     
     // Öppna order
+    var isOpening = false;
     function openOrder(orderId) {
+      if (isOpening) return; // 🔒 Förhindra dubbelklick
       const data = getData();
       if (data.currentOrder) {
         alert('Stäng nuvarande order först');
@@ -326,11 +328,13 @@
       const orderIndex = data.queue.findIndex(o => o.id === orderId);
       if (orderIndex === -1) return;
       
+      isOpening = true;
       data.queue[orderIndex].status = 'opening';
       data.queue[orderIndex].openedAt = new Date().toISOString(); // 🕐 Spara starttid
       data.currentOrder = data.queue[orderIndex];
       saveData(data);
       render();
+      setTimeout(() => { isOpening = false; }, 500); // 🔓 Lås upp efter 500ms
     }
     
     // Slutför order
@@ -377,13 +381,22 @@
     }
     
     // Skjut upp nuvarande order
+    var isSkipping = false;
     function skipCurrentOrder() {
+      if (isSkipping) return; // 🔒 Förhindra dubbelklick
       const data = getData();
       if (!data.currentOrder) return;
       
-      // Lägg tillbaka i kön som waiting
-      data.currentOrder.status = 'waiting';
-      data.queue.push(data.currentOrder);
+      isSkipping = true;
+      
+      // Lägg tillbaka i kön som waiting (men kolla så den inte redan finns)
+      const orderId = data.currentOrder.id;
+      const alreadyInQueue = data.queue.some(o => o.id === orderId);
+      
+      if (!alreadyInQueue) {
+        data.currentOrder.status = 'waiting';
+        data.queue.push(data.currentOrder);
+      }
       data.currentOrder = null;
       saveData(data);
       render();
@@ -391,7 +404,12 @@
       // Öppna nästa automatiskt
       const nextOrder = data.queue.find(o => o.status === 'waiting');
       if (nextOrder) {
-        setTimeout(() => openOrder(nextOrder.id), 300);
+        setTimeout(() => {
+          openOrder(nextOrder.id);
+          isSkipping = false; // 🔓 Lås upp efter att nästa öppnats
+        }, 300);
+      } else {
+        isSkipping = false;
       }
     }
     
