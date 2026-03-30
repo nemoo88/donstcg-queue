@@ -405,6 +405,14 @@
     // Ladda direkt och uppdatera var 3:e sekund
     loadData();
     setInterval(loadData, 3000);
+    
+    // 🔔 Lyssna på synk-signal från admin (direkt uppdatering)
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'tcg_sync_trigger') {
+        console.log('Overlay: Sync signal received from admin');
+        loadData();
+      }
+    });
   </script>
 </body>
 </html>
