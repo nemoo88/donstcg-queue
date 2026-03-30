@@ -189,6 +189,8 @@
     
     function saveData(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      // 🔔 Meddela overlay att data har ändrats
+      localStorage.setItem('tcg_sync_trigger', Date.now().toString());
     }
     
     // Formatera tid sedan
