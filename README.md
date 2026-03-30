@@ -9,13 +9,15 @@ Besök: `https://nemoo88.github.io/tcg-queue-demo/`
 ## ✨ Funktioner i demon
 
 - ✅ **Admin-panel** med full funktionalitet
+- ✅ **Flera produkter per order** - Lägg till "2 pack Pika, 3 pack Booster" på samma rad
 - ✅ **⏭️ Hoppa över-knapp** - Skjut upp order till sist i kön
+- ✅ **⏭️ Skjut upp öppen order** - Skjut upp pågående order och öppna nästa
 - ✅ **ÖPPNA-knapp** för alla ordrar (inklusive events)
 - ✅ **✕ Ta bort-knapp** för alla ordrar
 - ✅ **🕐 Tid sedan** order kom in
 - ✅ **Events** med rosa bakgrund (Giveaway, Duckrace, etc.)
-- ✅ **OBS Overlay** - Visar bara Rip n Ship (inte events)
-- ✅ **Statistik** - Omsättning, klara, est. tid
+- ✅ **OBS Overlay** - Visar kön med både Rip n Ship och Events
+- ✅ **Dynamisk tidsberäkning** - Systemet lär sig din takt och uppdaterar estimeringen
 - ✅ **🔄 Nollställ statistik** - Behåller kön, nollställer siffror
 - ✅ **Automatisk nästa** - Nästa order öppnas vid "Klar - Nästa"
 
