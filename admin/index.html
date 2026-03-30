@@ -32,6 +32,89 @@
     .nav-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
     .nav-link:hover { color: var(--text-primary); }
     .demo-badge { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: var(--warning); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    
+    /* 🔐 LOGIN SCREEN */
+    #login-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+    .login-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .login-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .login-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    .login-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .login-btn {
+      width: 100%;
+      padding: 16px 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .login-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .login-btn:active { transform: translateY(0); }
+    .login-error {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+    .login-error.show { display: block; }
+    #admin-content { display: none; }
+    #admin-content.authenticated { display: block; }
     .container { max-width: 1400px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
     @media(max-width:1024px){.container{grid-template-columns:1fr}}
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
@@ -80,6 +163,20 @@
   </style>
 </head>
 <body>
+  <!-- 🔐 LOGIN SCREEN - PLACEHOLDER: ÄNDRA LÖSENORD HÄR -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-icon">🎴</div>
+      <div class="login-title">Admin-inloggning</div>
+      <div class="login-subtitle">Demo-läge - ange lösenord för att testa</div>
+      <input type="password" id="login-password" class="login-input" placeholder="••••••" autocomplete="off">
+      <button class="login-btn" onclick="checkLogin()">🔓 Logga in</button>
+      <div id="login-error" class="login-error">Fel lösenord. Försök igen.</div>
+    </div>
+  </div>
+
+  <!-- 🖼️ ADMIN CONTENT (DOLD TILLS INLOGGAD) -->
+  <div id="admin-content">
   <header class="header">
     <div class="logo"><span class="logo-icon">🎴</span><span>TCG Admin Demo</span></div>
     <nav class="nav-links">
@@ -541,9 +638,39 @@
       alert('✅ Demo-data laddad! @KundMedFlera har 1 köplats med flera produkter: "2 pack Booster + 1 pack Pika"');
     }
     
-    // Initiera
-    render();
-    setInterval(render, 3000);
+    // 🔐 LOGIN-FUNKTION - PLACEHOLDER: ÄNDRA LÖSENORD HÄR
+    // =====================================================
+    const ADMIN_PASSWORD = 'demo123'; // 💡 ÄNDRA DETTA LÖSENORD!
+    // =====================================================
+    
+    function checkLogin() {
+      const input = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      
+      if (input === ADMIN_PASSWORD) {
+        // Rätt lösenord - visa admin
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-content').classList.add('authenticated');
+        
+        // Initiera appen
+        render();
+        setInterval(render, 3000);
+      } else {
+        // Fel lösenord
+        errorEl.classList.add('show');
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+      }
+    }
+    
+    // Enter-tangent = logga in
+    document.getElementById('login-password').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') checkLogin();
+    });
+    
+    // Fokusera på lösenordsfältet vid start
+    document.getElementById('login-password').focus();
   </script>
+  </div> <!-- /#admin-content -->
 </body>
 </html>
