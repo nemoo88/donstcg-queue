@@ -1,69 +1,49 @@
-# 🎴 TCG Queue System
+# 🎴 TCG Queue System - Demo
 
-**Live Rip n Ship Queue System för TCG-streamers**
+En demo-version av TCG Live Rip n Ship Queue System för GitHub Pages.
 
-&gt; ⚠️ **Detta är en demo-version.**  
-&gt; Kontakta för fullversion med Shopify-integration, permanent datalagring och automatiska ordrar.
+## 🚀 Live Demo
 
----
+Besök: `https://nemoo88.github.io/tcg-queue-demo/`
 
-## 🚀 Demo
+## ✨ Funktioner i demon
 
-Testa systemet live: **[GitHub Pages Demo](https://nemoo88.github.io/tcg-queue-demo/)**
+- ✅ **Admin-panel** med full funktionalitet
+- ✅ **⏭️ Hoppa över-knapp** - Skjut upp order till sist i kön
+- ✅ **ÖPPNA-knapp** för alla ordrar (inklusive events)
+- ✅ **✕ Ta bort-knapp** för alla ordrar
+- ✅ **🕐 Tid sedan** order kom in
+- ✅ **Events** med rosa bakgrund (Giveaway, Duckrace, etc.)
+- ✅ **OBS Overlay** - Visar bara Rip n Ship (inte events)
+- ✅ **Statistik** - Omsättning, klara, est. tid
+- ✅ **🔄 Nollställ statistik** - Behåller kön, nollställer siffror
+- ✅ **Automatisk nästa** - Nästa order öppnas vid "Klar - Nästa"
 
-### Vad ingår i demon:
+## ⚠️ Begränsningar (Demo)
 
-- ✅ **Admin-panel** – Hantera kön manuellt
-- ✅ **OBS Overlay** – Visa kön i din stream
-- ✅ **Event-hantering** – Separat hantering för events (Giveaway, Packbattle, Tournament, etc.)
-- ✅ **Statistik** – Omsättning, antal klara, estimerad tid
+- Data sparas bara i webbläsaren (localStorage)
+- Allt försvinner om du rensar cache eller byter webbläsare
+- Ingen Shopify-integration (manuell inmatning)
+- Ingen permanent lagring
 
-### Begränsningar i demo:
+## 🎮 Så här använder du demon
 
-- ❌ Data sparas bara lokalt (försvinner vid reload)
-- ❌ Ingen koppling till Shopify/butik
-- ❌ Ingen permanent lagring
+1. **Gå till admin-panelen** (`/admin/`)
+2. **Klicka "🎲 Ladda demo-data"** för att få några test-ordrar
+3. **Testa knapparna:**
+   - **⏭️** - Skjut upp order till sist i kön
+   - **ÖPPNA** - Öppna order på stream
+   - **✕** - Ta bort order
+   - **✓ Klar - Nästa** - Markera klar och öppna nästa automatiskt
+4. **Öppna overlay** i ny flik för att se hur det ser ut i OBS
 
----
+## 🛒 Fullversion
 
-## 🎮 Funktioner (Fullversion)
-
-| Funktion | Beskrivning |
-|----------|-------------|
-| **Shopify-integration** | Automatiska ordrar från din butik |
-| **Permanent datalagring** | All data sparas säkert i molnet |
-| **OBS Overlay** | Visa kön live i streamen |
-| **Event-hantering** | Separat kö för events (Giveaway, Packbattle, Tournament, etc.) |
-| **Statistik i realtid** | Omsättning, antal klara, estimerad tid |
-| **Lösenordsskydd** | Skydda admin-panelen |
-
----
-
-## 🛒 Intresserad av fullversion?
-
-Kontakta för:
-- **Prisuppgift**
-- **Custom anpassning**
-- **Support & installation**
-
-### 📞 Kontakt
-
-| Plattform | Länk/Info |
-|-----------|-----------|
-| **Discord** | 💬 [Skicka DM](https://discord.com/users/164845871278718978) eller lägg till: `nemoo88` |
-
----
-
-## 📝 Tekniska detaljer
-
-**Demo byggd med:**
-- HTML/CSS/JavaScript (vanilla)
-- localStorage för demo-data
-
-**Fullversion byggd med:**
-- Netlify Functions (backend)
-- Netlify Blob Storage (databas)
-- Shopify Webhooks (automatiska ordrar)
+Kontakta för fullversion med:
+- Shopify-integration (automatiska ordrar)
+- Netlify Blob Storage (permanent lagring)
+- HMAC-verifiering (säkerhet)
+- Custom anpassning
 
 ---
 
