@@ -28,10 +28,18 @@ Besök: `https://nemoo88.github.io/tcg-queue-demo/`
 - Ingen Shopify-integration (manuell inmatning)
 - Ingen permanent lagring
 
+## 🔐 Säkerhet
+
+Admin-panelen är skyddad med lösenord. För att testa:
+- **Demo-lösenord:** `demo123`
+
+I fullversionen kan du ändra till ett eget lösenord i `admin/index.html`.
+
 ## 🎮 Så här använder du demon
 
 1. **Gå till admin-panelen** (`/admin/`)
-2. **Klicka "🎲 Ladda demo-data"** för att få några test-ordrar
+2. **Logga in med lösenord:** `demo123`
+3. **Klicka "🎲 Ladda demo-data"** för att få några test-ordrar
 3. **Testa knapparna:**
    - **⏭️** - Skjut upp order till sist i kön
    - **ÖPPNA** - Öppna order på stream
@@ -48,5 +56,7 @@ Kontakta för fullversion med:
 - Custom anpassning
 
 ---
+
+**© 2026 TCG Queue System – Demo-version**
 
 **© 2026 TCG Queue System – Demo-version**
