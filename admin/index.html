@@ -3,42 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TCG Queue Admin</title>
+  <title>TCG Queue Admin - Demo</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --bg-primary: #0a0a0a; --bg-secondary: #111; --bg-card: #1a1a1a;
       --bg-hover: #222; --text-primary: #fff; --text-secondary: #888;
       --text-muted: #555; --border: #2a2a2a; --accent: #3b82f6;
-      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
-    }
-    /* Demo banner */
-    .demo-banner {
-      background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-      color: #000;
-      text-align: center;
-      padding: 10px 20px;
-      font-size: 13px;
-      font-weight: 700;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .demo-banner-icon {
-      font-size: 14px;
+      --success: #22c55e; --warning: #f59e0b; --event: #ff6b9d; --danger: #ef4444;
     }
     body { 
       font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; 
       background: var(--bg-primary); 
       color: var(--text-primary); 
       min-height: 100vh;
-      padding-top: 38px; /* Space for demo banner */
     }
     .header { 
       background: var(--bg-secondary); 
@@ -47,36 +25,47 @@
       display: flex; 
       justify-content: space-between; 
       align-items: center;
-      margin-top: 0;
     }
     .logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
     .logo-icon { font-size: 24px; }
     .nav-links { display: flex; gap: 20px; align-items: center; }
     .nav-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
     .nav-link:hover { color: var(--text-primary); }
-    .status-badge { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .demo-badge { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: var(--warning); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
     .container { max-width: 1400px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
     @media(max-width:1024px){.container{grid-template-columns:1fr}}
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-    .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .stat-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px}
     .stat-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;margin-bottom:8px}
     .stat-value{font-size:32px;font-weight:800}
     .blue{color:var(--accent)}.green{color:var(--success)}.orange{color:var(--warning)}
+    .reset-all-section { margin-bottom: 24px; text-align: right; }
     .current-section{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
     .current-label{font-size:14px;color:var(--text-secondary);font-weight:600}
     .current-empty{font-size:13px;color:var(--text-muted)}
     .queue-section{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
     .queue-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
     .queue-title{font-size:16px;font-weight:700}.queue-count{font-size:13px;color:var(--text-secondary)}
-    .queue-list{padding:16px}.queue-item{display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;margin-bottom:12px}
-    .queue-num{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
-    .queue-info{flex:1}.queue-user{font-size:15px;font-weight:700;margin-bottom:2px}.queue-product{font-size:13px;color:var(--text-secondary)}
-    .queue-price{font-size:13px;color:var(--warning);margin-top:4px}
-    .badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;background:var(--bg-hover);color:var(--text-secondary)}
-    .btn{padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+    .queue-list{padding:12px}
+    .queue-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
+    .queue-item.event{background:linear-gradient(135deg,rgba(255,107,157,.1),transparent);border-color:var(--event)}
+    .queue-item.event .queue-num{background:var(--event)}
+    .queue-num{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+    .queue-info{flex:1}.queue-user{font-size:14px;font-weight:700;margin-bottom:1px}.queue-product{font-size:12px;color:var(--text-secondary)}
+    .queue-price{font-size:12px;color:var(--warning);margin-top:2px}
+    .queue-time{font-size:10px;color:var(--text-muted);margin-top:1px}
+    .badge{padding:3px 8px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;background:var(--bg-hover);color:var(--text-secondary)}
+    .event-badge{background:var(--event);color:white;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px}
+    .btn{padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
     .btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:#2563eb}
     .btn-secondary{background:var(--bg-hover);color:var(--text-primary);border:1px solid var(--border)}
-    .btn-success{background:var(--success);color:black}.btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+    .btn-success{background:var(--success);color:black}
+    .btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+    .btn-danger:hover{background:var(--danger);color:white}
+    .btn-skip{background:rgba(245,158,11,.1);color:var(--warning);border:1px solid rgba(245,158,11,.3);padding:6px 10px;font-size:13px;margin-right:4px}
+    .btn-skip:hover{background:var(--warning);color:#000}
+    .btn-remove{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.3);padding:6px 10px;font-size:13px}
+    .btn-remove:hover{background:var(--danger);color:white}
     .btn-small{padding:6px 12px;font-size:11px}.btn-full{width:100%;padding:14px;font-size:14px;margin-top:8px}
     .sidebar{display:flex;flex-direction:column;gap:16px}
     .panel{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px}
@@ -84,44 +73,44 @@
     .form-group{margin-bottom:14px}.form-label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:6px}
     .form-input{width:100%;padding:12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px}
     .form-input:focus{outline:none;border-color:var(--accent)}
-    .form-row{display:grid;grid-template-columns:2fr 1fr;gap:8px}
-    .quick-grid{display:flex;flex-direction:column;gap:8px}
-    .quick-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;position:relative}
-    .quick-item:hover{background:var(--bg-hover);border-color:var(--accent)}.quick-item:hover .quick-delete{display:flex}
-    .quick-icon{font-size:16px}.quick-info{flex:1}.quick-name{font-weight:600}.quick-price{color:var(--text-secondary);font-size:12px}
-    .quick-item.event{background:linear-gradient(135deg,rgba(59,130,246,.1),transparent);border-color:var(--accent)}
-    .quick-delete{display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;background:var(--danger);border-radius:4px;align-items:center;justify-content:center;font-size:12px;color:white;cursor:pointer}
-    .add-quick-form{background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:12px}
-    .empty-state{text-align:center;padding:40px;color:var(--text-muted)}
-    .hidden{display:none!important}.section-hint{font-size:11px;color:var(--text-muted);margin-top:-12px;margin-bottom:12px}
-    @media(max-width:768px){
-      .demo-banner { font-size: 11px; padding: 8px 10px; }
-      body { padding-top: 32px; }
-    }
+    .hidden{display:none!important}
+    .empty-state{text-align:center;padding:40px;color:var(--text-muted);font-size:14px}
   </style>
 </head>
 <body>
-  <div class="demo-banner">
-    <span class="demo-banner-icon">⚠️</span>
-    DEMO • Data sparas endast lokalt och försvinner vid reload
-  </div>
-
   <header class="header">
-    <div class="logo"><span class="logo-icon">🎴</span><span>TCG Queue Admin</span></div>
+    <div class="logo"><span class="logo-icon">🎴</span><span>TCG Admin Demo</span></div>
     <nav class="nav-links">
       <a href="../index.html" class="nav-link">Hemsida</a>
       <a href="../overlay/index.html" target="_blank" class="nav-link">Overlay</a>
-      <span class="status-badge">● LIVE</span>
+      <span class="demo-badge">⚠️ DEMO</span>
     </nav>
   </header>
 
   <div class="container">
     <div class="main-content">
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Väntar (Rip n Ship)</div><div class="stat-value blue" id="stat-waiting">0</div></div>
-        <div class="stat-card"><div class="stat-label">Klara idag</div><div class="stat-value green" id="stat-completed">0</div></div>
-        <div class="stat-card"><div class="stat-label">Est. tid</div><div class="stat-value orange" id="stat-est">0 min</div></div>
-        <div class="stat-card"><div class="stat-label">Omsättning</div><div class="stat-value" id="stat-revenue">0 kr</div></div>
+        <div class="stat-card">
+          <div class="stat-label">Väntar</div>
+          <div class="stat-value blue" id="stat-waiting">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Klara idag</div>
+          <div class="stat-value green" id="stat-completed">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Est. tid</div>
+          <div class="stat-value orange" id="stat-est">0 min</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Omsättning</div>
+          <div class="stat-value" id="stat-revenue">0 kr</div>
+        </div>
+      </div>
+
+      <div class="reset-all-section">
+        <button class="btn btn-danger" onclick="resetStats()">🔄 Nollställ dagens statistik</button>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Nollställer omsättning & klara (kölistan behålls)</div>
       </div>
 
       <div class="current-section" id="current-section">
@@ -129,7 +118,10 @@
           <div class="current-label">Nuvarande order</div>
           <div id="current-details" class="current-empty">Ingen order öppnas</div>
         </div>
-        <button class="btn btn-success hidden" id="btn-complete">✓ Klar - Nästa</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-warning hidden" id="btn-skip-current" onclick="skipCurrentOrder()" title="Skjut upp (lägg sist i kön)">⏭️ Skjut upp</button>
+          <button class="btn btn-success hidden" id="btn-complete" onclick="completeCurrent()">✓ Klar - Nästa</button>
+        </div>
       </div>
 
       <div class="queue-section">
@@ -140,143 +132,279 @@
 
     <div class="sidebar">
       <div class="panel" id="ripship-panel">
-        <div class="panel-title">Lägg till Rip n Ship</div>
+        <div class="panel-title">Lägg till order</div>
         <div class="form-group"><label class="form-label">Användarnamn / Twitch</label><input type="text" class="form-input" id="manual-username" placeholder="t.ex. @Användare"></div>
         <div class="form-group"><label class="form-label">Produkt</label><input type="text" class="form-input" id="manual-product" placeholder="t.ex. Booster Box"></div>
         <div class="form-group"><label class="form-label">Pris (kr)</label><input type="number" class="form-input" id="manual-price" placeholder="0"></div>
-        <button class="btn btn-primary btn-full" id="btn-add-ripship">+ Lägg till i kö</button>
-        <button class="btn btn-secondary btn-full" id="btn-toggle-event">🎉 Lägg till Event istället</button>
-      </div>
-
-      <div class="panel hidden" id="event-panel">
-        <div class="panel-title">Lägg till Event</div>
-        <div class="form-group"><label class="form-label">Event-typ</label><input type="text" class="form-input" id="event-type" placeholder="t.ex. Giveaway, Duckrace..."></div>
-        <div class="form-group"><label class="form-label">Användarnamn</label><input type="text" class="form-input" id="event-username" placeholder="t.ex. @Användare"></div>
-        <div class="form-group"><label class="form-label">Intäkt (kr)</label><input type="number" class="form-input" id="event-price" placeholder="0"></div>
-        <button class="btn btn-primary btn-full" id="btn-add-event">+ Lägg till Event</button>
-        <button class="btn btn-secondary btn-full" id="btn-toggle-ripship">← Tillbaka till Rip n Ship</button>
+        <div class="form-group">
+          <label class="form-label">Typ</label>
+          <select class="form-input" id="manual-type">
+            <option value="ripship">Rip n Ship</option>
+            <option value="event">Event (Giveaway, etc.)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="addOrder()">+ Lägg till i kö</button>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Snabbval<button class="btn btn-small btn-secondary" id="btn-toggle-quick">+ Lägg till</button></div>
-        <div class="section-hint">Klicka för att lägga till i kö. Hovra för att ta bort.</div>
-        <div class="quick-grid" id="quick-list"></div>
-        <div class="add-quick-form hidden" id="add-quick-form">
-          <div class="form-group"><label class="form-label">Produktnamn</label><input type="text" class="form-input" id="quick-name" placeholder="t.ex. Elite Trainer Box"></div>
-          <div class="form-row">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Pris (kr)</label><input type="number" class="form-input" id="quick-price" placeholder="0"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Ikon (emoji)</label><input type="text" class="form-input" id="quick-icon" placeholder="📦" maxlength="2"></div>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            <button class="btn btn-primary" id="btn-save-quick" style="flex:1">Spara</button>
-            <button class="btn btn-secondary" id="btn-cancel-quick">Avbryt</button>
-          </div>
-        </div>
+        <div class="panel-title">Demo-data</div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+          Data sparas bara lokalt i din webbläsare. Ladda om sidan för att återställa allt.
+        </p>
+        <button class="btn btn-secondary btn-full" onclick="addDemoData()">🎲 Ladda demo-data</button>
       </div>
     </div>
   </div>
 
   <script>
-    var queue = [], currentOrder = null, completed = 0, revenue = 0, quickItems = [];
-    try {
-      var sq = localStorage.getItem('tcg_queue'), sc = localStorage.getItem('tcg_current'), sco = localStorage.getItem('tcg_completed'), sr = localStorage.getItem('tcg_revenue'), sqk = localStorage.getItem('tcg_quick_items');
-      if (sq) queue = JSON.parse(sq); if (sc) currentOrder = JSON.parse(sc); if (sco) completed = parseInt(sco); if (sr) revenue = parseInt(sr);
-      if (sqk) quickItems = JSON.parse(sqk); else quickItems = [{id:'1',name:'Booster Box',price:1199,icon:'📦',type:'ripship'},{id:'2',name:'ETB',price:449,icon:'🎁',type:'ripship'},{id:'3',name:'Booster Pack',price:45,icon:'🃏',type:'ripship'},{id:'4',name:'Giveaway',price:0,icon:'🎉',type:'event'}];
-    } catch(e) { quickItems = [{id:'1',name:'Booster Box',price:1199,icon:'📦',type:'ripship'},{id:'2',name:'ETB',price:449,icon:'🎁',type:'ripship'},{id:'3',name:'Booster Pack',price:45,icon:'🃏',type:'ripship'},{id:'4',name:'Giveaway',price:0,icon:'🎉',type:'event'}]; }
+    // localStorage key
+    const STORAGE_KEY = 'tcg_queue_demo';
     
+    // Initiera data
+    function getData() {
+      const defaultData = {
+        queue: [],
+        currentOrder: null,
+        completed: 0,
+        totalRevenue: 0
+      };
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : defaultData;
+      } catch(e) {
+        return defaultData;
+      }
+    }
+    
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    
+    // Formatera tid sedan
+    function formatTimeAgo(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      
+      if (diffMins < 1) return 'nyss';
+      if (diffMins < 60) return diffMins + ' min sedan';
+      if (diffHours < 24) return diffHours + ' tim sedan';
+      return date.toLocaleDateString('sv-SE', {month:'short', day:'numeric'});
+    }
+    
+    // Rendera
     function render() {
-      var waiting = queue.filter(function(o){return o.status==='waiting'}), ripShipWaiting = waiting.filter(function(o){return o.type==='ripship'});
-      document.getElementById('stat-waiting').textContent = ripShipWaiting.length;
+      const data = getData();
+      const queue = data.queue || [];
+      const currentOrder = data.currentOrder;
+      const completed = data.completed || 0;
+      const revenue = data.totalRevenue || 0;
+      
+      const waiting = queue.filter(o => o.status === 'waiting');
+      
+      // Stats
+      document.getElementById('stat-waiting').textContent = waiting.length;
       document.getElementById('stat-completed').textContent = completed;
-      document.getElementById('stat-est').textContent = (ripShipWaiting.length*5)+' min';
-      document.getElementById('stat-revenue').textContent = revenue.toLocaleString()+' kr';
-      var cd = document.getElementById('current-details'), bc = document.getElementById('btn-complete');
-      if (currentOrder) { cd.innerHTML = '<div style="font-size:18px;font-weight:700">'+currentOrder.username+'</div><div style="font-size:14px;color:#888;margin-top:4px">'+currentOrder.product+'</div>'; bc.classList.remove('hidden'); }
-      else { cd.innerHTML = '<span class="current-empty">Ingen order öppnas</span>'; bc.classList.add('hidden'); }
-      document.getElementById('queue-count').textContent = waiting.length+' ordrar';
-      var ql = document.getElementById('queue-list');
-      if (waiting.length===0) { ql.innerHTML = '<div class="empty-state">Inga ordrar i kön</div>'; return; }
-      var html = '';
-      for (var i=0; i<waiting.length; i++) {
-        var o = waiting[i];
-        html += '<div class="queue-item"><div class="queue-num">'+(i+1)+'</div><div class="queue-info"><div class="queue-user">'+o.username+'</div><div class="queue-product">'+o.product+'</div>'+(o.price?'<div class="queue-price">💰 '+o.price+' kr</div>':'')+'</div><div class="queue-actions">'+(o.source==='manual'?'<span class="badge">Manuell</span>':'')+'<button class="btn btn-primary" data-oid="'+o.id+'">ÖPPNA</button></div></div>';
+      document.getElementById('stat-est').textContent = (waiting.length * 5) + ' min';
+      document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
+      
+      // Nuvarande order
+      const cd = document.getElementById('current-details');
+      const bc = document.getElementById('btn-complete');
+      if (currentOrder) {
+        cd.innerHTML = '<div style="font-size:16px;font-weight:700">' + currentOrder.username + '</div>' +
+                       '<div style="font-size:13px;color:#888;margin-top:2px">' + currentOrder.product + '</div>';
+        bc.classList.remove('hidden');
+      } else {
+        cd.innerHTML = '<span class="current-empty">Ingen order öppnas</span>';
+        bc.classList.add('hidden');
       }
+      
+      // Kölista
+      document.getElementById('queue-count').textContent = waiting.length + ' ordrar';
+      const ql = document.getElementById('queue-list');
+      
+      if (waiting.length === 0) {
+        ql.innerHTML = '<div class="empty-state">Inga ordrar i kön</div>';
+        return;
+      }
+      
+      let html = '';
+      for (let i = 0; i < waiting.length; i++) {
+        const o = waiting[i];
+        const isEvent = o.type === 'event';
+        const timeAgo = formatTimeAgo(o.createdAt);
+        
+        html += '<div class="queue-item ' + (isEvent ? 'event' : '') + '">' +
+          '<div class="queue-num">' + (i + 1) + '</div>' +
+          '<div class="queue-info">' +
+            '<div class="queue-user">' + o.username + (isEvent ? '<span class="event-badge">EVENT</span>' : '') + '</div>' +
+            '<div class="queue-product">' + o.product + '</div>' +
+            (o.price ? '<div class="queue-price">💰 ' + o.price + ' kr</div>' : '') +
+            (timeAgo ? '<div class="queue-time">🕐 ' + timeAgo + '</div>' : '') +
+          '</div>' +
+          '<div class="queue-actions">' +
+            '<button class="btn btn-skip" onclick="skipOrder(\'' + o.id + '\')" title="Skjut upp">⏭️</button>' +
+            '<button class="btn btn-primary" onclick="openOrder(\'' + o.id + '\')">ÖPPNA</button>' +
+            '<button class="btn btn-remove" onclick="removeOrder(\'' + o.id + '\')" title="Ta bort">✕</button>' +
+          '</div>' +
+        '</div>';
+      }
+      
       ql.innerHTML = html;
-      var btns = ql.querySelectorAll('.btn-primary');
-      for (var j=0; j<btns.length; j++) btns[j].addEventListener('click', function(e){openOrder(e.target.getAttribute('data-oid')); });
     }
     
-    function renderQuickItems() {
-      var c = document.getElementById('quick-list');
-      if (quickItems.length===0) { c.innerHTML = '<div class="empty-state" style="padding:20px">Inga snabbval. Lägg till ovan.</div>'; return; }
-      var html = '';
-      for (var i=0; i<quickItems.length; i++) {
-        var it = quickItems[i], ev = it.type==='event';
-        html += '<div class="quick-item '+(ev?'event':'')+'" data-qid="'+it.id+'"><span class="quick-icon">'+(it.icon||'📦')+'</span><div class="quick-info"><div class="quick-name">'+it.name+'</div><div class="quick-price">'+it.price.toLocaleString()+' kr</div></div><div class="quick-delete" data-did="'+it.id+'">×</div></div>';
+    // Lägg till order
+    function addOrder() {
+      const username = document.getElementById('manual-username').value.trim();
+      const product = document.getElementById('manual-product').value.trim();
+      const price = parseInt(document.getElementById('manual-price').value) || 0;
+      const type = document.getElementById('manual-type').value;
+      
+      if (!username || !product) {
+        alert('Fyll i användarnamn och produkt');
+        return;
       }
-      c.innerHTML = html;
-      var its = c.querySelectorAll('.quick-item');
-      for (var j=0; j<its.length; j++) its[j].addEventListener('click', function(e){if(e.target.classList.contains('quick-delete'))return;useQuickItem(e.currentTarget.getAttribute('data-qid')); });
-      var dels = c.querySelectorAll('.quick-delete');
-      for (var k=0; k<dels.length; k++) dels[k].addEventListener('click', function(e){e.stopPropagation(); deleteQuickItem(e.target.getAttribute('data-did')); });
+      
+      const data = getData();
+      const order = {
+        id: 'demo_' + Date.now(),
+        username: username.startsWith('@') ? username : '@' + username,
+        product: product,
+        price: price,
+        type: type,
+        status: 'waiting',
+        createdAt: new Date().toISOString(),
+        source: 'manual'
+      };
+      
+      data.queue.push(order);
+      data.totalRevenue += price;
+      saveData(data);
+      
+      // Rensa formulär
+      document.getElementById('manual-username').value = '';
+      document.getElementById('manual-product').value = '';
+      document.getElementById('manual-price').value = '';
+      
+      render();
     }
     
-    function addOrder(type) {
-      var un, pr, pri;
-      if (type==='ripship') { un=document.getElementById('manual-username').value.trim(); pr=document.getElementById('manual-product').value.trim(); pri=parseInt(document.getElementById('manual-price').value)||0; }
-      else { un=document.getElementById('event-username').value.trim(); pr=document.getElementById('event-type').value.trim(); pri=parseInt(document.getElementById('event-price').value)||0; }
-      if (!un||!pr) { alert('Fyll i alla fält'); return; }
-      queue.push({id:'manual_'+Date.now(),username:un,product:pr,price:pri,type:type,status:'waiting',source:'manual'});
-      revenue+=pri; save(); render();
-      if (type==='ripship') { document.getElementById('manual-username').value=''; document.getElementById('manual-product').value=''; document.getElementById('manual-price').value=''; }
-      else { document.getElementById('event-type').value=''; document.getElementById('event-username').value=''; document.getElementById('event-price').value=''; }
+    // Öppna order
+    function openOrder(orderId) {
+      const data = getData();
+      if (data.currentOrder) {
+        alert('Stäng nuvarande order först');
+        return;
+      }
+      
+      const orderIndex = data.queue.findIndex(o => o.id === orderId);
+      if (orderIndex === -1) return;
+      
+      data.queue[orderIndex].status = 'opening';
+      data.currentOrder = data.queue[orderIndex];
+      saveData(data);
+      render();
     }
     
-    function useQuickItem(qid) {
-      var it=null; for(var i=0;i<quickItems.length;i++)if(quickItems[i].id===qid){it=quickItems[i];break;}
-      if(!it)return; var un=prompt('Användarnamn för '+it.name+':'); if(!un)return;
-      queue.push({id:'quick_'+Date.now(),username:un,product:it.name,price:it.price,type:it.type,status:'waiting',source:'quick'});
-      revenue+=it.price; save(); render();
-    }
-    
-    function addQuickItem() {
-      var nm=document.getElementById('quick-name').value.trim(), pr=parseInt(document.getElementById('quick-price').value)||0, ic=document.getElementById('quick-icon').value.trim()||'📦';
-      if(!nm){alert('Ange produktnamn');return;}
-      quickItems.push({id:'quick_'+Date.now(),name:nm,price:pr,icon:ic,type:'ripship'});
-      localStorage.setItem('tcg_quick_items',JSON.stringify(quickItems)); renderQuickItems(); toggleQuickForm();
-      document.getElementById('quick-name').value=''; document.getElementById('quick-price').value=''; document.getElementById('quick-icon').value='';
-    }
-    
-    function deleteQuickItem(qid) { if(!confirm('Ta bort detta snabbval?'))return; var ni=[]; for(var i=0;i<quickItems.length;i++)if(quickItems[i].id!==qid)ni.push(quickItems[i]); quickItems=ni; localStorage.setItem('tcg_quick_items',JSON.stringify(quickItems)); renderQuickItems(); }
-    function toggleQuickForm() { document.getElementById('add-quick-form').classList.toggle('hidden'); }
-    
-    function openOrder(oid) {
-      if(currentOrder){alert('Stäng nuvarande order först');return;}
-      var o=null; for(var i=0;i<queue.length;i++)if(queue[i].id===oid){o=queue[i];break;}
-      if(o){currentOrder=o;o.status='opening';save();render();}
-    }
-    
+    // Slutför order
     function completeCurrent() {
-      if(!currentOrder)return;
-      var next=null; for(var i=0;i<queue.length;i++)if(queue[i].id!==currentOrder.id&&queue[i].status==='waiting'){next=queue[i];break;}
-      completed++; var nq=[]; for(var i=0;i<queue.length;i++)if(queue[i].id!==currentOrder.id)nq.push(queue[i]); queue=nq;
-      if(next){currentOrder=next;currentOrder.status='opening';}else{currentOrder=null;}
-      save(); render();
+      const data = getData();
+      if (!data.currentOrder) return;
+      
+      const orderId = data.currentOrder.id;
+      data.queue = data.queue.filter(o => o.id !== orderId);
+      data.completed++;
+      data.currentOrder = null;
+      saveData(data);
+      render();
+      
+      // Öppna nästa automatiskt
+      const nextOrder = data.queue.find(o => o.status === 'waiting');
+      if (nextOrder) {
+        setTimeout(() => openOrder(nextOrder.id), 300);
+      }
     }
     
-    function toggleForm() { document.getElementById('ripship-panel').classList.toggle('hidden'); document.getElementById('event-panel').classList.toggle('hidden'); }
-    function save() { localStorage.setItem('tcg_queue',JSON.stringify(queue)); localStorage.setItem('tcg_current',JSON.stringify(currentOrder)); localStorage.setItem('tcg_completed',completed); localStorage.setItem('tcg_revenue',revenue); }
+    // Hoppa över order
+    function skipOrder(orderId) {
+      const data = getData();
+      const orderIndex = data.queue.findIndex(o => o.id === orderId);
+      if (orderIndex === -1) return;
+      
+      const order = data.queue[orderIndex];
+      data.queue.splice(orderIndex, 1);
+      data.queue.push(order);
+      saveData(data);
+      render();
+    }
     
-    document.getElementById('btn-add-ripship').addEventListener('click',function(){addOrder('ripship'); });
-    document.getElementById('btn-add-event').addEventListener('click',function(){addOrder('event'); });
-    document.getElementById('btn-toggle-event').addEventListener('click',toggleForm);
-    document.getElementById('btn-toggle-ripship').addEventListener('click',toggleForm);
-    document.getElementById('btn-complete').addEventListener('click',completeCurrent);
-    document.getElementById('btn-toggle-quick').addEventListener('click',toggleQuickForm);
-    document.getElementById('btn-save-quick').addEventListener('click',addQuickItem);
-    document.getElementById('btn-cancel-quick').addEventListener('click',toggleQuickForm);
+    // Ta bort order
+    function removeOrder(orderId) {
+      if (!confirm('Ta bort denna order från kön?')) return;
+      
+      const data = getData();
+      const orderIndex = data.queue.findIndex(o => o.id === orderId);
+      if (orderIndex === -1) return;
+      
+      const order = data.queue[orderIndex];
+      data.totalRevenue -= order.price || 0;
+      data.queue.splice(orderIndex, 1);
+      saveData(data);
+      render();
+    }
     
-    render(); renderQuickItems();
+    // Nollställ statistik
+    function resetStats() {
+      if (!confirm('Nollställa dagens statistik?\n\nDetta nollställer:\n• Omsättning\n• Klara ordrar\n\nKölistan behålls!')) return;
+      
+      const data = getData();
+      data.completed = 0;
+      data.totalRevenue = 0;
+      saveData(data);
+      render();
+      alert('✅ Dagens statistik nollställd!');
+    }
+    
+    // Demo-data
+    function addDemoData() {
+      const demoOrders = [
+        {username: '@StreamViewer', product: 'Booster Box', price: 1199, type: 'ripship'},
+        {username: '@LuckyWinner', product: 'Duckrace Lotteri', price: 50, type: 'event'},
+        {username: '@CardCollector', product: 'Elite Trainer Box', price: 449, type: 'ripship'},
+        {username: '@PokemonFan', product: 'Booster Pack x3', price: 135, type: 'ripship'},
+        {username: '@GiveawayKing', product: 'Pack Battle Entry', price: 100, type: 'event'}
+      ];
+      
+      const data = getData();
+      
+      demoOrders.forEach((o, i) => {
+        const date = new Date();
+        date.setMinutes(date.getMinutes() - (i * 5 + Math.floor(Math.random() * 3)));
+        
+        data.queue.push({
+          id: 'demo_' + Date.now() + '_' + i,
+          username: o.username,
+          product: o.product,
+          price: o.price,
+          type: o.type,
+          status: 'waiting',
+          createdAt: date.toISOString(),
+          source: 'demo'
+        });
+        data.totalRevenue += o.price;
+      });
+      
+      saveData(data);
+      render();
+    }
+    
+    // Initiera
+    render();
+    setInterval(render, 3000);
   </script>
 </body>
 </html>
