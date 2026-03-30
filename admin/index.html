@@ -213,6 +213,7 @@
       const currentOrder = data.currentOrder;
       const completed = data.completed || 0;
       const revenue = data.totalRevenue || 0;
+      averageTimePerOrder = data.averageTimePerOrder || 5; // 🕐 Hämta dynamisk tid
       
       const waiting = queue.filter(o => o.status === 'waiting');
       
