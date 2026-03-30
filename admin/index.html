@@ -414,9 +414,16 @@
       }
     }
     
-    // Hoppa över order
+    // Hoppa över order (i kön)
     function skipOrder(orderId) {
       const data = getData();
+      
+      // Om ordern är currentOrder (öppen), använd skipCurrentOrder istället
+      if (data.currentOrder && data.currentOrder.id === orderId) {
+        skipCurrentOrder();
+        return;
+      }
+      
       const orderIndex = data.queue.findIndex(o => o.id === orderId);
       if (orderIndex === -1) return;
       
