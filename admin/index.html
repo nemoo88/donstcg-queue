@@ -448,10 +448,13 @@
       if (next) setTimeout(() => openOrder(next.id), 300);
     }
     
+    var isSkippingCurrent = false;
     function skipCurrentOrder() {
+      if (isSkippingCurrent) return; // 🔒 Förhindra dubbelklick
       const data = getData();
       if (!data.currentOrder) return;
       
+      isSkippingCurrent = true;
       const order = data.currentOrder;
       order.status = 'waiting';
       order.createdAt = new Date().toISOString();
@@ -459,14 +462,20 @@
       data.currentOrder = null;
       saveData(data);
       render();
+      
+      setTimeout(() => { isSkippingCurrent = false; }, 500); // 🔓 Lås upp efter 500ms
     }
     
     function skipOrder(id) {
       const data = getData();
-      const order = data.queue.find(o => o.id === id);
-      if (!order) return;
+      const orderIndex = data.queue.findIndex(o => o.id === id);
+      if (orderIndex === -1) return;
       
+      // 🔄 Ta bort från nuvarande position och lägg sist
+      const order = data.queue.splice(orderIndex, 1)[0];
       order.createdAt = new Date().toISOString();
+      data.queue.push(order);
+      
       saveData(data);
       render();
     }
