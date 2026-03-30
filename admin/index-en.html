@@ -283,6 +283,10 @@
     // 🔐 Password
     const ADMIN_PASSWORD = 'demo123';
     
+    // 🔒 Lock variables to prevent double-click
+    var isProcessing = false;
+    var processingId = null;
+    
     function checkLogin() {
       const input = document.getElementById('login-password').value;
       if (input === ADMIN_PASSWORD) {
@@ -414,27 +418,41 @@
       render();
     }
     
-    var isOpeningOrder = false;
     function openOrder(id) {
-      if (isOpeningOrder) return; // 🔒 Prevent double-click
+      // 🔒 Check if already processing this order
+      if (isProcessing && processingId === id) return;
+      if (isProcessing) return; // Waiting for another operation
+      
       const data = getData();
       if (data.currentOrder) { alert('Close current order first'); return; }
       
       const order = data.queue.find(o => o.id === id);
       if (!order) return;
       
-      isOpeningOrder = true;
+      // 🔒 Lock
+      isProcessing = true;
+      processingId = id;
+      
       order.status = 'open';
       order.openedAt = new Date().toISOString();
       data.currentOrder = order;
       saveData(data);
       render();
-      setTimeout(() => { isOpeningOrder = false; }, 300);
+      
+      // 🔓 Unlock after 300ms
+      setTimeout(() => { 
+        isProcessing = false; 
+        processingId = null;
+      }, 300);
     }
     
     function completeCurrent() {
+      if (isProcessing) return;
+      
       const data = getData();
       if (!data.currentOrder) return;
+      
+      isProcessing = true;
       
       const duration = (Date.now() - new Date(data.currentOrder.openedAt).getTime()) / 60000;
       data.completionHistory = data.completionHistory || [];
@@ -449,37 +467,50 @@
       render();
       
       const next = getData().queue.find(o => o.status === 'waiting');
-      if (next) setTimeout(() => openOrder(next.id), 300);
+      if (next) {
+        setTimeout(() => {
+          openOrder(next.id);
+          isProcessing = false;
+        }, 300);
+      } else {
+        isProcessing = false;
+      }
     }
     
-    var isSkippingCurrent = false;
     function skipCurrentOrder() {
-      if (isSkippingCurrent) return; // 🔒 Prevent double-click
+      if (isProcessing) return;
       const data = getData();
       if (!data.currentOrder) return;
       
-      isSkippingCurrent = true;
+      isProcessing = true;
+      
       const order = data.currentOrder;
       order.status = 'waiting';
       order.createdAt = new Date().toISOString();
       
-      // 🔍 Check if order already in queue (prevent duplicates)
+      // 🔍 Check if order already in queue
       const alreadyInQueue = data.queue.some(o => o.id === order.id);
       if (!alreadyInQueue) {
-        data.queue.push(order); // 🔄 Add back to queue!
+        data.queue.push(order);
       }
       
       data.currentOrder = null;
       saveData(data);
       render();
       
-      setTimeout(() => { isSkippingCurrent = false; }, 500); // 🔓 Unlock after 500ms
+      setTimeout(() => { isProcessing = false; }, 300);
     }
     
     function skipOrder(id) {
+      if (isProcessing && processingId === id) return;
+      if (isProcessing) return;
+      
       const data = getData();
       const orderIndex = data.queue.findIndex(o => o.id === id);
       if (orderIndex === -1) return;
+      
+      isProcessing = true;
+      processingId = id;
       
       // 🔄 Remove from current position and add to end
       const order = data.queue.splice(orderIndex, 1)[0];
@@ -488,18 +519,30 @@
       
       saveData(data);
       render();
+      
+      setTimeout(() => { 
+        isProcessing = false; 
+        processingId = null;
+      }, 300);
     }
     
     function removeOrder(id) {
+      if (isProcessing) return;
       if (!confirm('Remove this order?')) return;
+      
+      isProcessing = true;
+      
       const data = getData();
       data.queue = data.queue.filter(o => o.id !== id);
       saveData(data);
       render();
+      
+      setTimeout(() => { isProcessing = false; }, 300);
     }
     
     function resetStats() {
       if (!confirm('Reset statistics?')) return;
+      
       const data = getData();
       data.completed = 0;
       data.totalRevenue = 0;
