@@ -10,52 +10,53 @@ Besök: [`https://nemoo88.github.io/tcg-queue-demo/`](https://nemoo88.github.io/
 
 ## ✨ Funktioner i demon
 
-- ✅ **Admin-panel** med full funktionalitet
+- ✅ **Admin-panel** med full funktionalitet (lösenordsskyddad)
 - ✅ **Flera produkter per order** - Lägg till "2 pack Pika, 3 pack Booster" på samma rad
-- ✅ **⏭️ Hoppa över** - Skjut upp order till sist i kön (både i kön och öppna)
-- ✅ **⏭️ Skjut upp öppen** - Skjut upp pågående order och öppna nästa
-- ✅ **ÖPPNA-knapp** för alla ordrar (inklusive events)
-- ✅ **✕ Ta bort-knapp** för alla ordrar
-- ✅ **🕐 Tid sedan** order kom in
-- ✅ **Events** med rosa bakgrund (Giveaway, Duckrace, etc.)
-- ✅ **OBS Overlay** - Visar kön med både Rip n Ship och Events
-- ✅ **Dynamisk tidsberäkning** - Systemet lär sig din takt och uppdaterar estimeringen
-- ✅ **🔄 Nollställ statistik** - Behåller kön, nollställer siffror
-- ✅ **Automatisk nästa** - Nästa order öppnas vid "Klar - Nästa"
+- ✅ **⏭️ Skjut upp order** - Flytta order till sist i kön (fungerar både för väntande och öppna ordrar)
+- ✅ **⏭️ Nästa i kön** - Skjut upp pågående order och öppna nästa automatiskt
+- ✅ **🔗 ÖPPNA-knapp** - Öppna vilken order som helst på stream
+- ✅ **✕ Ta bort-knapp** - Ta bort order från kön
+- ✅ **🕐 Tid sedan** - Se hur länge ordern har väntat
+- ✅ **🎉 Events** - Hantera giveaways, duckrace, pack battles (rosa bakgrund)
+- ✅ **📺 OBS Overlay** - Visa kön live i din stream
+- ✅ **📊 Dynamisk tid** - Systemet lär sig hur snabb du är och uppdaterar estimeringen
+- ✅ **🔄 Nollställ statistik** - Börja om med nya siffror (behåller kön)
+- ✅ **Automatisk nästa** - Nästa order öppnas när du klickar "Klar - Nästa"
 
 ## ⚠️ Begränsningar (Demo)
 
 - Data sparas bara i webbläsaren (localStorage)
 - Allt försvinner om du rensar cache eller byter webbläsare
-- Ingen Shopify-integration (manuell inmatning)
+- Ingen Shopify-integration (endast manuell inmatning)
 - Ingen permanent lagring
 
 ## 🔐 Säkerhet
 
-Admin-panelen är skyddad med lösenord. För att testa:
-- **Demo-lösenord:** `demo123`
+Admin-panelen är skyddad med lösenord för att förhindra obehörig åtkomst.
 
-I fullversionen kan du ändra till ett eget lösenord i `admin/index.html`.
+**Demo-lösenord:** `demo123`
+
+> 💡 I fullversionen kan du ändra till ett eget lösenord i `admin/index.html`.
 
 ## 🎮 Så här använder du demon
 
 1. **Gå till admin-panelen** (`/admin/`)
-2. **Logga in med lösenord:** `demo123`
-3. **Klicka "🎲 Ladda demo-data"** för att få några test-ordrar
-3. **Testa knapparna:**
-   - **⏭️** - Skjut upp order till sist i kön
-   - **ÖPPNA** - Öppna order på stream
-   - **✕** - Ta bort order
-   - **✓ Klar - Nästa** - Markera klar och öppna nästa automatiskt
-4. **Öppna overlay** i ny flik för att se hur det ser ut i OBS
+2. **Logga in** med lösenord: `demo123`
+3. **Ladda demo-data** - Klicka på "🎲 Ladda demo-data" för att få test-ordrar
+4. **Testa funktionerna:**
+   - **⏭️ Skjut upp** - Flytta order längst bak i kön
+   - **🔗 ÖPPNA** - Öppna order på stream
+   - **✕ Ta bort** - Ta bort order från kön
+   - **✓ Klar - Nästa** - Markera klar och gå till nästa automatiskt
+5. **Öppna overlay** i ny flik för att se hur det ser ut i OBS
 
 ## 🛒 Fullversion
 
 Kontakta för fullversion med:
-- Shopify-integration (automatiska ordrar)
-- Netlify Blob Storage (permanent lagring)
-- HMAC-verifiering (säkerhet)
-- Custom anpassning
+- 📥 Shopify-integration (automatiska ordrar från din butik)
+- 💾 Netlify Blob Storage (permanent lagring)
+- 🔒 HMAC-verifiering (extra säkerhet)
+- 🎨 Custom anpassning (färger, logo, etc.)
 
 ---
 
