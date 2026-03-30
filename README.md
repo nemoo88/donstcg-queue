@@ -10,8 +10,8 @@ Besök: `https://nemoo88.github.io/tcg-queue-demo/`
 
 - ✅ **Admin-panel** med full funktionalitet
 - ✅ **Flera produkter per order** - Lägg till "2 pack Pika, 3 pack Booster" på samma rad
-- ✅ **⏭️ Hoppa över-knapp** - Skjut upp order till sist i kön
-- ✅ **⏭️ Skjut upp öppen order** - Skjut upp pågående order och öppna nästa
+- ✅ **⏭️ Hoppa över** - Skjut upp order till sist i kön (både i kön och öppna)
+- ✅ **⏭️ Skjut upp öppen** - Skjut upp pågående order och öppna nästa
 - ✅ **ÖPPNA-knapp** för alla ordrar (inklusive events)
 - ✅ **✕ Ta bort-knapp** för alla ordrar
 - ✅ **🕐 Tid sedan** order kom in
