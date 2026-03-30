@@ -389,15 +389,16 @@
       
       isSkipping = true;
       
-      // Lägg tillbaka i kön som waiting (men kolla så den inte redan finns)
-      const orderId = data.currentOrder.id;
-      const alreadyInQueue = data.queue.some(o => o.id === orderId);
-      
-      if (!alreadyInQueue) {
-        data.currentOrder.status = 'waiting';
-        data.queue.push(data.currentOrder);
-      }
+      // Lägg tillbaka i kön sist
+      data.currentOrder.status = 'waiting';
+      const orderToMove = data.currentOrder;
       data.currentOrder = null;
+      
+      // Ta bort om den redan finns i kön (för säkerhets skull)
+      data.queue = data.queue.filter(o => o.id !== orderToMove.id);
+      // Lägg till sist
+      data.queue.push(orderToMove);
+      
       saveData(data);
       render();
       
@@ -406,10 +407,10 @@
       if (nextOrder) {
         setTimeout(() => {
           openOrder(nextOrder.id);
-          isSkipping = false; // 🔓 Lås upp efter att nästa öppnats
+          isSkipping = false; // 🔓 Lås upp
         }, 300);
       } else {
-        isSkipping = false;
+        isSkipping = false; // 🔓 Lås upp direkt om ingen nästa
       }
     }
     
