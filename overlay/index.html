@@ -364,8 +364,8 @@
         currentProducts.innerHTML = '<div class="current-product-row">Ingen order öppnas just nu</div>';
       }
       
-      // Kölista - visa bara Rip n Ship (inte events)
-      const waitingQueue = (data.queue || []).filter(o => o.status === 'waiting' && o.type !== 'event');
+      // Kölista - visa alla ordrar inklusive events
+      const waitingQueue = (data.queue || []).filter(o => o.status === 'waiting');
       document.getElementById('queue-count').textContent = waitingQueue.length;
       
       const queueList = document.getElementById('queue-list');
@@ -376,11 +376,12 @@
         let html = '';
         for (let i = 0; i < Math.min(waitingQueue.length, 4); i++) {
           const order = waitingQueue[i];
+          const isEvent = order.type === 'event';
           html += `
-            <div class="queue-item">
+            <div class="queue-item ${isEvent ? 'event' : ''}">
               <div class="queue-position">${i + 1}</div>
               <div class="queue-info">
-                <div class="queue-username">${order.username}</div>
+                <div class="queue-username">${order.username}${isEvent ? ' <span class="event-tag">EVENT</span>' : ''}</div>
                 <div class="queue-meta">${order.product}</div>
               </div>
             </div>
