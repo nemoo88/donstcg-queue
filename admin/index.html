@@ -168,11 +168,20 @@
         queue: [],
         currentOrder: null,
         completed: 0,
-        totalRevenue: 0
+        totalRevenue: 0,
+        averageTimePerOrder: 5, // 🕐 Standardtid
+        completionHistory: [] // 🕐 Historik för tidsberäkning
       };
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
-        return stored ? JSON.parse(stored) : defaultData;
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          // 🕐 Se till att nya fält finns även i gamla sparningar
+          if (!parsed.averageTimePerOrder) parsed.averageTimePerOrder = 5;
+          if (!parsed.completionHistory) parsed.completionHistory = [];
+          return parsed;
+        }
+        return defaultData;
       } catch(e) {
         return defaultData;
       }
@@ -210,7 +219,9 @@
       // Stats
       document.getElementById('stat-waiting').textContent = waiting.length;
       document.getElementById('stat-completed').textContent = completed;
-      document.getElementById('stat-est').textContent = (waiting.length * 5) + ' min';
+      // 🕐 Dynamisk tid baserad på faktisk historik
+      const estMinutes = waiting.length * averageTimePerOrder;
+      document.getElementById('stat-est').textContent = estMinutes + ' min (' + averageTimePerOrder + ' min/order)';
       document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + ' kr';
       
       // Nuvarande order
@@ -310,6 +321,7 @@
       if (orderIndex === -1) return;
       
       data.queue[orderIndex].status = 'opening';
+      data.queue[orderIndex].openedAt = new Date().toISOString(); // 🕐 Spara starttid
       data.currentOrder = data.queue[orderIndex];
       saveData(data);
       render();
@@ -321,6 +333,30 @@
       if (!data.currentOrder) return;
       
       const orderId = data.currentOrder.id;
+      const openedAt = data.currentOrder.openedAt;
+      
+      // 🕐 Beräkna hur lång tid ordern tog
+      if (openedAt) {
+        const startTime = new Date(openedAt).getTime();
+        const endTime = new Date().getTime();
+        const durationMinutes = Math.round((endTime - startTime) / 60000);
+        
+        // Spara i historik (max 20)
+        data.completionHistory.push({
+          orderId: orderId,
+          duration: durationMinutes,
+          completedAt: new Date().toISOString()
+        });
+        if (data.completionHistory.length > 20) {
+          data.completionHistory.shift();
+        }
+        
+        // Räkna ut nytt medelvärde
+        const totalTime = data.completionHistory.reduce((sum, h) => sum + h.duration, 0);
+        data.averageTimePerOrder = Math.round(totalTime / data.completionHistory.length);
+        averageTimePerOrder = data.averageTimePerOrder; // Uppdatera global variabel
+      }
+      
       data.queue = data.queue.filter(o => o.id !== orderId);
       data.completed++;
       data.currentOrder = null;
@@ -383,11 +419,14 @@
     
     // Nollställ statistik
     function resetStats() {
-      if (!confirm('Nollställa dagens statistik?\n\nDetta nollställer:\n• Omsättning\n• Klara ordrar\n\nKölistan behålls!')) return;
+      if (!confirm('Nollställa dagens statistik?\n\nDetta nollställer:\n• Omsättning\n• Klara ordrar\n• Tidsstatistik\n\nKölistan behålls!')) return;
       
       const data = getData();
       data.completed = 0;
       data.totalRevenue = 0;
+      data.averageTimePerOrder = 5; // 🕐 Nollställ tid
+      data.completionHistory = []; // 🕐 Nollställ historik
+      averageTimePerOrder = 5; // Uppdatera global variabel
       saveData(data);
       render();
       alert('✅ Dagens statistik nollställd!');
