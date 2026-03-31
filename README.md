@@ -34,8 +34,20 @@ Visas på inloggningssidan.
 - ✅ **Tid sedan** - Se hur länge ordern väntat
 - ✅ **Events** - Hantera giveaways, duckrace, pack battles
 - ✅ **OBS Overlay** - Visa kön live i din stream
-- ✅ **Dynamisk tid** - Systemet lär sig hur snabb du är
+- ✅ **Dynamisk ETA** - Systemet lär sig hur snabb du är och uppdaterar estimerad tid
 - ✅ **Nollställ statistik** - Börja om med nya siffror
+
+### 🕐 Dynamisk tid/ETA
+
+Systemet lär sig automatiskt hur lång tid du behöver per order:
+
+- **Hur det fungerar:** När du markerar en order som "Klar", registreras tiden det tog
+- **Snitt beräkning:** Systemet sparar de 20 senaste tiderna och räknar ut ett snitt
+- **Vad påverkas:** Endast "Klar - Nästa" registrerar tid. Att skjuta upp en order påverkar inte snittet.
+- **ETA i overlay:** `(antal ordrar) × (snitt tid) = estimerad tid kvar`
+- **Startvärde:** 5 minuter per order innan systemet lärt sig ditt tempo
+
+Exempel: Om snittet är 3 minuter och du har 4 ordrar i kön → ETA: 12 minuter
 
 ## ⚠️ Begränsningar (Demo)
 

@@ -34,8 +34,20 @@ Displayed on the login screen.
 - ✅ **Time waiting** - See how long the order has been waiting
 - ✅ **Events** - Handle giveaways, duckrace, pack battles
 - ✅ **OBS Overlay** - Show queue live in your stream
-- ✅ **Dynamic time** - System learns how fast you are
+- ✅ **Dynamic ETA** - System learns your speed and updates estimated time
 - ✅ **Reset statistics** - Start over with new numbers
+
+### 🕐 Dynamic Time/ETA
+
+The system automatically learns how long you need per order:
+
+- **How it works:** When you mark an order as "Done", the time it took is recorded
+- **Average calculation:** System saves the 20 latest times and calculates an average
+- **What affects it:** Only "Done - Next" records time. Skipping an order does not affect the average.
+- **ETA in overlay:** `(number of orders) × (average time) = estimated time remaining`
+- **Starting value:** 5 minutes per order before the system learns your pace
+
+Example: If average is 3 minutes and you have 4 orders in queue → ETA: 12 minutes
 
 ## ⚠️ Limitations (Demo)
 
