@@ -1,6 +1,6 @@
 # 🎴 TCG Queue System - Demo
 
-En demo-version av TCG Live Rip n Ship Queue System för GitHub Pages.
+En demo-version av TCG Live Rip n Ship Queue System.
 
 ## 🚀 Live Demo
 
