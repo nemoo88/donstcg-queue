@@ -1,30 +1,41 @@
-# 🎴 TCG Queue System - Demo
+ 🎴 TCG Queue System - Demo
 
-En demo-version av TCG Live Rip n Ship Queue System.
+En demo-version av TCG Live Rip n Ship Queue System
 
 ## 🚀 Live Demo
 
-Besök: [`https://nemoo88.github.io/tcg-queue-demo/`](https://nemoo88.github.io/tcg-queue-demo/)
+Besök: `https://nemoo88.github.io/tcg-queue-demo/`
+
+## 📁 Filer
 
 ```
+├── index.html          # Välj språk
+├── index-en.html       # Choose language
+├── admin/
+│   ├── index.html      # Köhanteraren (svenska)
+│   └── index-en.html   # Queue Manager (English)
+└── overlay/
+    └── index.html      # OBS Overlay
+```
+
 ## 🔐 Inloggning
 
 **Lösenord:** `demo`
 
-Lösenordet visas direkt på inloggningssidan.
+Visas på inloggningssidan.
 
-## ✨ Funktioner i demon
+## ✨ Funktioner
 
-- ✅ **Admin-panel** med full funktionalitet (lösenordsskyddad)
+- ✅ **Köhantering** - Se och hantera alla ordrar
 - ✅ **Flera produkter per order** - Lägg till flera produkter på samma rad
 - ✅ **⏭️ Skjut upp order** - Flytta order till sist i kön
-- ✅ **🔗 ÖPPNA-knapp** - Öppna vilken order som helst på stream
+- ✅ **ÖPPNA-knapp** - Öppna order på stream
 - ✅ **✕ Ta bort-knapp** - Ta bort order från kön
-- ✅ **🕐 Tid sedan** - Se hur länge ordern har väntat
-- ✅ **🎉 Events** - Hantera giveaways, duckrace, pack battles (rosa bakgrund)
-- ✅ **📺 OBS Overlay** - Visa kön live i din stream
-- ✅ **📊 Dynamisk tid** - Systemet lär sig hur snabb du är
-- ✅ **🔄 Nollställ statistik** - Börja om med nya siffror
+- ✅ **Tid sedan** - Se hur länge ordern väntat
+- ✅ **Events** - Hantera giveaways, duckrace, pack battles
+- ✅ **OBS Overlay** - Visa kön live i din stream
+- ✅ **Dynamisk tid** - Systemet lär sig hur snabb du är
+- ✅ **Nollställ statistik** - Börja om med nya siffror
 
 ## ⚠️ Begränsningar (Demo)
 
@@ -34,18 +45,18 @@ Lösenordet visas direkt på inloggningssidan.
 
 ## 🎮 Snabbstart
 
-1. Gå till admin-panelen (`/admin/`)
+1. Gå till köhanteraren (`/admin/`)
 2. Logga in med lösenord: `demo`
-3. Ladda demo-data - Klicka på "🎲 Ladda demo-data"
+3. Ladda demo-data
 4. Testa funktionerna!
 
 ## 🛒 Fullversion
 
 Fullversion inkluderar:
-- 📥 Shopify-integration (automatiska ordrar)
-- 💾 Netlify Blob Storage (permanent lagring)
-- 🔒 Server-side lösenordsskydd
-- 🎨 Custom anpassning
+- Shopify-integration (automatiska ordrar)
+- Netlify Blob Storage (permanent lagring)
+- Server-side lösenordsskydd
+- Custom anpassning
 
 ---
 
