@@ -351,8 +351,15 @@
         const stored = localStorage.getItem(STORAGE_KEY);
         if (!stored) return defaultData;
         const parsed = JSON.parse(stored);
-        // Slå samman med default-värden för bakåtkompatibilitet
-        return { ...defaultData, ...parsed };
+        // VIKTIGT: parsed måste komma EFTER defaultData för att sparade värden ska gälla
+        // Men vi vill behålla default för fält som saknas
+        const merged = { ...defaultData };
+        for (const key in parsed) {
+          if (parsed[key] !== undefined && parsed[key] !== null) {
+            merged[key] = parsed[key];
+          }
+        }
+        return merged;
       } catch(e) { return defaultData; }
     }
     
@@ -511,8 +518,10 @@
       data.currentOrder = null;
       data.completed++;
       saveData(data);
-      document.getElementById('stat-avg-time').textContent = data.averageTimePerOrder + ' min';
       render();
+      // Uppdatera snittid direkt efter render
+      const updatedData = getData();
+      document.getElementById('stat-avg-time').textContent = (updatedData.averageTimePerOrder || 5) + ' min';
       
       const next = getData().queue.find(o => o.status === 'waiting');
       if (next) {
