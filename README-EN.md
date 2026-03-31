@@ -1,29 +1,41 @@
 # 🎴 TCG Queue System - Demo
 
-A demo version of the TCG Live Rip n Ship Queue System.
+A demo version of the TCG Live Rip n Ship Queue System for GitHub Pages.
 
 ## 🚀 Live Demo
 
-Visit: [`https://nemoo88.github.io/tcg-queue-demo/`](https://nemoo88.github.io/tcg-queue-demo/)
+Visit: `https://nemoo88.github.io/tcg-queue-demo/`
+
+## 📁 Files
+
+```
+├── index.html          # Choose language
+├── index-en.html       # Choose language
+├── admin/
+│   ├── index.html      # Queue Manager (Swedish)
+│   └── index-en.html   # Queue Manager (English)
+└── overlay/
+    └── index.html      # OBS Overlay
+```
 
 ## 🔐 Login
 
 **Password:** `demo`
 
-The password is displayed directly on the login screen.
+Displayed on the login screen.
 
-## ✨ Demo Features
+## ✨ Features
 
-- ✅ **Admin panel** with full functionality (password protected)
+- ✅ **Queue Management** - View and manage all orders
 - ✅ **Multiple products per order** - Add several products on the same line
 - ✅ **⏭️ Skip order** - Move order to the end of the queue
-- ✅ **🔗 OPEN button** - Open any order on stream
+- ✅ **OPEN button** - Open order on stream
 - ✅ **✕ Remove button** - Remove order from queue
-- ✅ **🕐 Time waiting** - See how long the order has been waiting
-- ✅ **🎉 Events** - Handle giveaways, duckrace, pack battles (pink background)
-- ✅ **📺 OBS Overlay** - Show queue live in your stream
-- ✅ **📊 Dynamic time** - System learns how fast you are
-- ✅ **🔄 Reset statistics** - Start over with new numbers
+- ✅ **Time waiting** - See how long the order has been waiting
+- ✅ **Events** - Handle giveaways, duckrace, pack battles
+- ✅ **OBS Overlay** - Show queue live in your stream
+- ✅ **Dynamic time** - System learns how fast you are
+- ✅ **Reset statistics** - Start over with new numbers
 
 ## ⚠️ Limitations (Demo)
 
@@ -33,18 +45,18 @@ The password is displayed directly on the login screen.
 
 ## 🎮 Quick Start
 
-1. Go to admin panel (`/admin/`)
+1. Go to Queue Manager (`/admin/`)
 2. Login with password: `demo`
-3. Load demo data - Click "🎲 Load demo data"
+3. Load demo data
 4. Test the features!
 
 ## 🛒 Full Version
 
 Full version includes:
-- 📥 Shopify integration (automatic orders)
-- 💾 Netlify Blob Storage (permanent storage)
-- 🔒 Server-side password protection
-- 🎨 Custom branding
+- Shopify integration (automatic orders)
+- Netlify Blob Storage (permanent storage)
+- Server-side password protection
+- Custom branding
 
 ---
 
